@@ -10,9 +10,9 @@ import (
 	"os"
 	"reflect"
 	"strconv"
+	"strings"
 
 	"github.com/aws/aws-lambda-go/events"
-	"github.com/aws/aws-lambda-go/lambda"
 	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/aws/aws-sdk-go/service/s3"
 	"github.com/graphql-go/graphql"
@@ -65,76 +65,82 @@ func convertPrimitiveToGraphQLType(t reflect.Type) *graphql.Scalar {
 }
 
 func createCustomType(t reflect.Type) *graphql.Object {
-	return graphql.NewObject(graphql.ObjectConfig{
-		Name: "Todo",
-		Fields: graphql.Fields{
-			"id": &graphql.Field{
-				Type: graphql.String,
-			},
-			"text": &graphql.Field{
-				Type: graphql.String,
-			},
-			"done": &graphql.Field{
-				Type: graphql.Boolean,
-			},
-		},
-	})
-}
+	fields := &graphql.ArgumentConfig{}
 
-func traverseArgsStruct(t reflect.Type) graphql.FieldConfigArgument {
-	fields := graphql.FieldConfigArgument{}
+	fmt.Printf("IN - Kind: %v, Elem: %v\n", t.String(), t.Kind())
 
 	for i := 0; i < t.NumField(); i++ {
 		field := t.Field(i)
 
-		fmt.Printf("field: %v, typeField: %v, tag: %v, kind: %v\n", field.Name, field.Type, field.Tag, field.Type.Kind())
+		fmt.Printf("Name: %v, Type: %v, Kind: %v ", field.Name, field.Type, field.Type.Kind())
 
 		if field.Type.Kind() == reflect.Ptr {
 			fmt.Printf("Elem: %v, %v\n", field.Type.Elem(), field.Type.Elem().Kind())
 
 			if field.Type.Elem().Kind() == reflect.Struct {
-				// Construct custom type and traverse
-				// fields[field.Name] = traverseArgsStruct(field.Type.Elem())
-			}
-
-			if field.Tag.Get("required") == "true" {
-				fields[field.Name] = &graphql.ArgumentConfig{
-					Type: graphql.NewNonNull(convertPrimitiveToGraphQLType(field.Type.Elem())),
-				}
+				fields.Type = createCustomType(field.Type.Elem())
+			} else if field.Tag.Get("required") == "true" {
+				fields.Type = graphql.NewNonNull(convertPrimitiveToGraphQLType(field.Type.Elem()))
 			} else {
-				fields[field.Name] = &graphql.ArgumentConfig{
-					Type: convertPrimitiveToGraphQLType(field.Type.Elem()),
-				}
+				fields.Type = graphql.NewNonNull(convertPrimitiveToGraphQLType(field.Type.Elem()))
 			}
+		}
+	}
+
+	return graphql.NewObject(graphql.ObjectConfig{
+		Name:   t.String(),
+		Fields: fields,
+	})
+}
+
+func parseInputArg(t reflect.Type) graphql.FieldConfigArgument {
+	fields := graphql.FieldConfigArgument{}
+
+	if t.Kind() == reflect.Struct {
+		fields[t.String()] = &graphql.ArgumentConfig{
+			Type: graphql.NewNonNull(createCustomType(t)),
+		}
+	} else {
+		fields[t.String()] = &graphql.ArgumentConfig{
+			Type: convertPrimitiveToGraphQLType(t),
 		}
 	}
 
 	return fields
 }
 
+func parseOutputArg(t reflect.Type) *graphql.Object {
+	ss := strings.Split(t.String(), ".")
+	name := ss[len(ss)-1]
+
+	out := graphql.NewObject(graphql.ObjectConfig{
+		Name:   name,
+		Fields: graphql.Fields{},
+	})
+
+	return out
+}
+
 func parseFunction(t reflect.Type) *graphql.Field {
 	field := &graphql.Field{}
-	functionName := t.Name()
-	field.Description = functionName
+	field.Description = t.Name()
 
 	// Parse Input Arguments
 	numIn := t.NumIn()
 	for i := 0; i < numIn; i++ {
-
 		inV := t.In(i)
-		inKind := inV.Kind() //func
-		fmt.Printf("\nParameter IN: "+strconv.Itoa(i)+"\nKind: %v, Elem: %v\n-----------\n", inKind, inV.Elem())
-
-		// fields := traverseArgsStruct(inV.Elem())
+		field.Args = parseInputArg(inV.Elem())
 	}
 
 	// Parse Output Values
 	numOut := t.NumOut()
 	for o := 0; o < numOut; o++ {
 		returnV := t.Out(o)
-		returnKind := returnV.Kind()
-		fmt.Printf("\nParameter OUT: "+strconv.Itoa(o)+"\nKind: %v Name: %v", returnKind, returnV.Name())
+		fmt.Printf("\nParameter OUT: "+strconv.Itoa(o)+"\nKind: %v Name: %v String: %v", returnV.Kind(), returnV.Name(), returnV.String())
+
 	}
+
+	field.Type = parseOutputArg(t.Out(0).Elem())
 
 	return field
 
@@ -160,7 +166,13 @@ func main() {
 	}
 
 	rootQuery := graphql.ObjectConfig{Name: "RootQuery", Fields: fields}
-	schemaConfig := graphql.SchemaConfig{Mutation: graphql.NewObject(rootQuery)}
+	rootMutation := graphql.ObjectConfig{Name: "RootMutation", Fields: fields}
+
+	schemaConfig := graphql.SchemaConfig{
+		Query:    graphql.NewObject(rootQuery),
+		Mutation: graphql.NewObject(rootMutation),
+	}
+
 	schema, err := graphql.NewSchema(schemaConfig)
 
 	if err != nil {
@@ -186,5 +198,5 @@ func main() {
 
 	}
 
-	lambda.Start(Handler)
+	// lambda.Start(Handler)
 }
