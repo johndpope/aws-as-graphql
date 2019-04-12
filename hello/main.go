@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"context"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"io/ioutil"
 	"log"
@@ -52,6 +53,39 @@ func Handler(ctx context.Context) (Response, error) {
 	return resp, nil
 }
 
+var processedTypes = make(map[string]graphql.Object)
+var processedInputTypes = make(map[string]graphql.InputObject)
+
+func lookupInputType(s string) (graphql.InputObject, error) {
+	var q graphql.InputObject
+	if _, ok := processedInputTypes[s]; ok {
+		return processedInputTypes[s], nil
+	}
+
+	fmt.Println("InputObject " + s + " already processed!")
+
+	return q, errors.New("InputObject already processed")
+}
+
+func lookupType(s string) (graphql.Object, error) {
+	var q graphql.Object
+	if _, ok := processedInputTypes[s]; ok {
+		return processedTypes[s], nil
+	}
+
+	fmt.Println("Object " + s + " already processed!")
+
+	return q, errors.New("Object already processed")
+}
+
+func markTypeAsProcessed(s string, item graphql.Object) {
+	processedTypes[s] = item
+}
+
+func markInputTypeAsProcessed(s string, item graphql.InputObject) {
+	processedInputTypes[s] = item
+}
+
 func normalizeGraphQLName(str string) string {
 	return strings.Replace(str, ".", "_", -1)
 }
@@ -68,6 +102,12 @@ func convertPrimitiveToGraphQLType(t reflect.Type) *graphql.Scalar {
 }
 
 func createCustomType(t reflect.Type) *graphql.Object {
+	name := normalizeGraphQLName(t.String()) + "_type"
+	obj, err := lookupType(name)
+	if err == nil {
+		return &obj
+	}
+
 	fields := graphql.Fields{}
 
 	for i := 0; i < t.NumField(); i++ {
@@ -97,13 +137,23 @@ func createCustomType(t reflect.Type) *graphql.Object {
 		}
 	}
 
-	return graphql.NewObject(graphql.ObjectConfig{
-		Name:   normalizeGraphQLName(t.String()),
+	object := graphql.NewObject(graphql.ObjectConfig{
+		Name:   name,
 		Fields: fields,
 	})
+
+	markTypeAsProcessed(name, *object)
+
+	return object
 }
 
 func createCustomInputType(t reflect.Type) *graphql.InputObject {
+	name := normalizeGraphQLName(t.String()) + "_inputType"
+	obj, err := lookupInputType(name)
+	if err == nil {
+		return &obj
+	}
+
 	fields := graphql.InputObjectConfigFieldMap{}
 
 	// fmt.Printf("IN - Kind: %v, Elem: %v\n", t.String(), t.Kind())
@@ -135,12 +185,16 @@ func createCustomInputType(t reflect.Type) *graphql.InputObject {
 		}
 	}
 
-	return graphql.NewInputObject(
+	inputObject := graphql.NewInputObject(
 		graphql.InputObjectConfig{
-			Name:   normalizeGraphQLName(t.String()),
+			Name:   name,
 			Fields: fields,
 		},
 	)
+
+	markInputTypeAsProcessed(name, *inputObject)
+
+	return inputObject
 }
 
 func parseInputArg(t reflect.Type) graphql.FieldConfigArgument {
