@@ -53,6 +53,10 @@ func Handler(ctx context.Context) (Response, error) {
 	return resp, nil
 }
 
+func normalizeGraphQLName(str string) string {
+	return strings.Replace(str, ".", "_", -1)
+}
+
 func convertPrimitiveToGraphQLType(t reflect.Type) *graphql.Scalar {
 	switch t.Kind() {
 	case reflect.String:
@@ -64,8 +68,8 @@ func convertPrimitiveToGraphQLType(t reflect.Type) *graphql.Scalar {
 	return graphql.String
 }
 
-func createCustomType(t reflect.Type) *graphql.Object {
-	fields := &graphql.ArgumentConfig{}
+func createCustomType(t reflect.Type) *graphql.InputObject {
+	fields := graphql.InputObjectConfigFieldMap{}
 
 	fmt.Printf("IN - Kind: %v, Elem: %v\n", t.String(), t.Kind())
 
@@ -78,31 +82,43 @@ func createCustomType(t reflect.Type) *graphql.Object {
 			fmt.Printf("Elem: %v, %v\n", field.Type.Elem(), field.Type.Elem().Kind())
 
 			if field.Type.Elem().Kind() == reflect.Struct {
-				fields.Type = createCustomType(field.Type.Elem())
+				fields[field.Name] = &graphql.InputObjectFieldConfig{
+					Type: createCustomType(field.Type.Elem()),
+				}
 			} else if field.Tag.Get("required") == "true" {
-				fields.Type = graphql.NewNonNull(convertPrimitiveToGraphQLType(field.Type.Elem()))
+				fields[field.Name] = &graphql.InputObjectFieldConfig{
+					Type: graphql.NewNonNull(convertPrimitiveToGraphQLType(field.Type.Elem())),
+				}
 			} else {
-				fields.Type = graphql.NewNonNull(convertPrimitiveToGraphQLType(field.Type.Elem()))
+				fields[field.Name] = &graphql.InputObjectFieldConfig{
+					Type: convertPrimitiveToGraphQLType(field.Type.Elem()),
+				}
 			}
 		}
 	}
 
-	return graphql.NewObject(graphql.ObjectConfig{
-		Name:   t.String(),
-		Fields: fields,
-	})
+	return graphql.NewInputObject(
+		graphql.InputObjectConfig{
+			Name: normalizeGraphQLName(t.String()),
+			Fields: graphql.InputObjectConfigFieldMap{
+				"key": &graphql.InputObjectFieldConfig{
+					Type: graphql.String,
+				},
+			},
+		},
+	)
 }
 
 func parseInputArg(t reflect.Type) graphql.FieldConfigArgument {
 	fields := graphql.FieldConfigArgument{}
 
 	if t.Kind() == reflect.Struct {
-		fields[t.String()] = &graphql.ArgumentConfig{
+		fields[normalizeGraphQLName(t.String())] = &graphql.ArgumentConfig{
 			Type: graphql.NewNonNull(createCustomType(t)),
 		}
 	} else {
-		fields[t.String()] = &graphql.ArgumentConfig{
-			Type: convertPrimitiveToGraphQLType(t),
+		fields[normalizeGraphQLName(t.String())] = &graphql.ArgumentConfig{
+			Type: graphql.NewNonNull(convertPrimitiveToGraphQLType(t)),
 		}
 	}
 
@@ -110,12 +126,17 @@ func parseInputArg(t reflect.Type) graphql.FieldConfigArgument {
 }
 
 func parseOutputArg(t reflect.Type) *graphql.Object {
-	ss := strings.Split(t.String(), ".")
-	name := ss[len(ss)-1]
-
 	out := graphql.NewObject(graphql.ObjectConfig{
-		Name:   name,
-		Fields: graphql.Fields{},
+		Name: normalizeGraphQLName(t.String()),
+		Fields: graphql.Fields{
+			"hello": &graphql.Field{
+				Type: graphql.String,
+				Resolve: func(p graphql.ResolveParams) (interface{}, error) {
+					fmt.Println(p.Args)
+					return "world", nil
+				},
+			},
+		},
 	})
 
 	return out
