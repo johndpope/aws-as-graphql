@@ -9,7 +9,6 @@ import (
 	"log"
 	"os"
 	"reflect"
-	"strconv"
 	"strings"
 
 	"github.com/aws/aws-lambda-go/events"
@@ -68,43 +67,78 @@ func convertPrimitiveToGraphQLType(t reflect.Type) *graphql.Scalar {
 	return graphql.String
 }
 
-func createCustomType(t reflect.Type) *graphql.InputObject {
-	fields := graphql.InputObjectConfigFieldMap{}
-
-	fmt.Printf("IN - Kind: %v, Elem: %v\n", t.String(), t.Kind())
+func createCustomType(t reflect.Type) *graphql.Object {
+	fields := graphql.Fields{}
 
 	for i := 0; i < t.NumField(); i++ {
 		field := t.Field(i)
 
-		fmt.Printf("Name: %v, Type: %v, Kind: %v ", field.Name, field.Type, field.Type.Kind())
+		// fmt.Printf("Name: %v, Type: %v, Kind: %v ", field.Name, field.Type, field.Type.Kind())
 
 		if field.Type.Kind() == reflect.Ptr {
-			fmt.Printf("Elem: %v, %v\n", field.Type.Elem(), field.Type.Elem().Kind())
+			// fmt.Printf("Elem: %v, %v\n", field.Type.Elem(), field.Type.Elem().Kind())
+
+			fields[field.Name] = &graphql.Field{}
 
 			if field.Type.Elem().Kind() == reflect.Struct {
-				fields[field.Name] = &graphql.InputObjectFieldConfig{
-					Type: createCustomType(field.Type.Elem()),
-				}
+				fields[field.Name].Type = createCustomType(field.Type.Elem())
 			} else if field.Tag.Get("required") == "true" {
-				fields[field.Name] = &graphql.InputObjectFieldConfig{
-					Type: graphql.NewNonNull(convertPrimitiveToGraphQLType(field.Type.Elem())),
-				}
+				fields[field.Name].Type = graphql.NewNonNull(convertPrimitiveToGraphQLType(field.Type.Elem()))
 			} else {
-				fields[field.Name] = &graphql.InputObjectFieldConfig{
-					Type: convertPrimitiveToGraphQLType(field.Type.Elem()),
-				}
+				fields[field.Name].Type = convertPrimitiveToGraphQLType(field.Type.Elem())
 			}
+		}
+	}
+
+	if len(fields) == 0 {
+		fields["Empty"] = &graphql.Field{
+			Description: "NOT YET IMPLEMENTED (probably array or number)",
+			Type:        graphql.Boolean,
+		}
+	}
+
+	return graphql.NewObject(graphql.ObjectConfig{
+		Name:   normalizeGraphQLName(t.String()),
+		Fields: fields,
+	})
+}
+
+func createCustomInputType(t reflect.Type) *graphql.InputObject {
+	fields := graphql.InputObjectConfigFieldMap{}
+
+	// fmt.Printf("IN - Kind: %v, Elem: %v\n", t.String(), t.Kind())
+
+	for i := 0; i < t.NumField(); i++ {
+		field := t.Field(i)
+
+		// fmt.Printf("Name: %v, Type: %v, Kind: %v ", field.Name, field.Type, field.Type.Kind())
+
+		if field.Type.Kind() == reflect.Ptr {
+			// fmt.Printf("Elem: %v, %v\n", field.Type.Elem(), field.Type.Elem().Kind())
+
+			fields[field.Name] = &graphql.InputObjectFieldConfig{}
+
+			if field.Type.Elem().Kind() == reflect.Struct {
+				fields[field.Name].Type = createCustomInputType(field.Type.Elem())
+			} else if field.Tag.Get("required") == "true" {
+				fields[field.Name].Type = graphql.NewNonNull(convertPrimitiveToGraphQLType(field.Type.Elem()))
+			} else {
+				fields[field.Name].Type = convertPrimitiveToGraphQLType(field.Type.Elem())
+			}
+		}
+	}
+
+	if len(fields) == 0 {
+		fields["Empty"] = &graphql.InputObjectFieldConfig{
+			Description: "NOT YET IMPLEMENTED (probably array or number)",
+			Type:        graphql.Boolean,
 		}
 	}
 
 	return graphql.NewInputObject(
 		graphql.InputObjectConfig{
-			Name: normalizeGraphQLName(t.String()),
-			Fields: graphql.InputObjectConfigFieldMap{
-				"key": &graphql.InputObjectFieldConfig{
-					Type: graphql.String,
-				},
-			},
+			Name:   normalizeGraphQLName(t.String()),
+			Fields: fields,
 		},
 	)
 }
@@ -114,7 +148,7 @@ func parseInputArg(t reflect.Type) graphql.FieldConfigArgument {
 
 	if t.Kind() == reflect.Struct {
 		fields[normalizeGraphQLName(t.String())] = &graphql.ArgumentConfig{
-			Type: graphql.NewNonNull(createCustomType(t)),
+			Type: graphql.NewNonNull(createCustomInputType(t)),
 		}
 	} else {
 		fields[normalizeGraphQLName(t.String())] = &graphql.ArgumentConfig{
@@ -126,17 +160,21 @@ func parseInputArg(t reflect.Type) graphql.FieldConfigArgument {
 }
 
 func parseOutputArg(t reflect.Type) *graphql.Object {
+	fields := graphql.Fields{}
+
+	if t.Kind() == reflect.Struct {
+		fields[normalizeGraphQLName(t.String())] = &graphql.Field{
+			Type: graphql.NewNonNull(createCustomType(t)),
+		}
+	} else {
+		fields[normalizeGraphQLName(t.String())] = &graphql.Field{
+			Type: graphql.NewNonNull(convertPrimitiveToGraphQLType(t)),
+		}
+	}
+
 	out := graphql.NewObject(graphql.ObjectConfig{
-		Name: normalizeGraphQLName(t.String()),
-		Fields: graphql.Fields{
-			"hello": &graphql.Field{
-				Type: graphql.String,
-				Resolve: func(p graphql.ResolveParams) (interface{}, error) {
-					fmt.Println(p.Args)
-					return "world", nil
-				},
-			},
-		},
+		Name:   normalizeGraphQLName(t.String()) + "_return",
+		Fields: fields,
 	})
 
 	return out
@@ -156,8 +194,8 @@ func parseFunction(t reflect.Type) *graphql.Field {
 	// Parse Output Values
 	numOut := t.NumOut()
 	for o := 0; o < numOut; o++ {
-		returnV := t.Out(o)
-		fmt.Printf("\nParameter OUT: "+strconv.Itoa(o)+"\nKind: %v Name: %v String: %v", returnV.Kind(), returnV.Name(), returnV.String())
+		// returnV := t.Out(o)
+		// fmt.Printf("OUT - Kind: %v Name: %v String: %v\n", returnV.Kind(), returnV.Name(), returnV.String())
 
 	}
 
@@ -173,21 +211,28 @@ func main() {
 		// Handle Session creation error
 	}
 	svc := s3.New(sess)
+	queryFields := graphql.Fields{}
+	mutationFields := graphql.Fields{}
 
-	// s3Type := reflect.TypeOf(svc)
-	// for i := 0; i < s3Type.NumMethod(); i++ {
-	// 	method := s3Type.Method(i)
-	// 	fmt.Println(method.Name)
-	// }
+	s3Type := reflect.TypeOf(svc)
+	for i := 0; i < s3Type.NumMethod(); i++ {
+		method := s3Type.Method(i)
+		fmt.Println(method.Name)
 
-	x := reflect.TypeOf(svc.CreateBucket)
-
-	fields := graphql.Fields{
-		"createBucket": parseFunction(x),
+		// if strings.HasPrefix(method.Name, "Create") || strings.HasPrefix(method.Name, "Delete") {
+		// 	mutationFields[method.Name] = parseFunction(s3Type.Method(i).Type)
+		// } else
+		if strings.HasPrefix(method.Name, "Put") && !strings.HasSuffix(method.Name, "Request") && !strings.HasSuffix(method.Name, "WithContext") {
+			queryFields[method.Name] = parseFunction(s3Type.Method(i).Type)
+		}
 	}
 
-	rootQuery := graphql.ObjectConfig{Name: "RootQuery", Fields: fields}
-	rootMutation := graphql.ObjectConfig{Name: "RootMutation", Fields: fields}
+	// x := reflect.TypeOf(svc.CreateBucket)
+
+	// fields["createBucket"] = parseFunction(x)
+
+	rootQuery := graphql.ObjectConfig{Name: "RootQuery", Fields: queryFields}
+	rootMutation := graphql.ObjectConfig{Name: "RootMutation", Fields: mutationFields}
 
 	schemaConfig := graphql.SchemaConfig{
 		Query:    graphql.NewObject(rootQuery),
