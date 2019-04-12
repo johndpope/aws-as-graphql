@@ -38,8 +38,6 @@ func Handler(ctx context.Context) (Response, error) {
 
 	json.HTMLEscape(&buf, body)
 
-	// sess, err := session.NewSession(&aws.Config{Region: aws.String("us-west-2")})
-
 	resp := Response{
 		StatusCode:      200,
 		IsBase64Encoded: false,
@@ -53,36 +51,33 @@ func Handler(ctx context.Context) (Response, error) {
 	return resp, nil
 }
 
-var processedTypes = make(map[string]graphql.Object)
-var processedInputTypes = make(map[string]graphql.InputObject)
+var processedTypes = make(map[string]*graphql.Object)
+var processedInputTypes = make(map[string]*graphql.InputObject)
 
-func lookupInputType(s string) (graphql.InputObject, error) {
-	var q graphql.InputObject
-	if _, ok := processedInputTypes[s]; ok {
-		return processedInputTypes[s], nil
+func lookupInputType(s string) (*graphql.InputObject, error) {
+	if val, ok := processedInputTypes[s]; ok {
+		fmt.Println("InputObject " + s + " already processed!")
+
+		return val, nil
 	}
 
-	fmt.Println("InputObject " + s + " already processed!")
-
-	return q, errors.New("InputObject already processed")
+	return nil, errors.New("NOT_FOUND")
 }
 
-func lookupType(s string) (graphql.Object, error) {
-	var q graphql.Object
-	if _, ok := processedInputTypes[s]; ok {
-		return processedTypes[s], nil
+func lookupType(s string) (*graphql.Object, error) {
+	if val, ok := processedTypes[s]; ok {
+		fmt.Println("Object " + s + " already processed!")
+		return val, nil
 	}
 
-	fmt.Println("Object " + s + " already processed!")
-
-	return q, errors.New("Object already processed")
+	return nil, errors.New("NOT_FOUND")
 }
 
-func markTypeAsProcessed(s string, item graphql.Object) {
+func markTypeAsProcessed(s string, item *graphql.Object) {
 	processedTypes[s] = item
 }
 
-func markInputTypeAsProcessed(s string, item graphql.InputObject) {
+func markInputTypeAsProcessed(s string, item *graphql.InputObject) {
 	processedInputTypes[s] = item
 }
 
@@ -105,19 +100,14 @@ func createCustomType(t reflect.Type) *graphql.Object {
 	name := normalizeGraphQLName(t.String()) + "_type"
 	obj, err := lookupType(name)
 	if err == nil {
-		return &obj
+		return obj
 	}
 
 	fields := graphql.Fields{}
 
 	for i := 0; i < t.NumField(); i++ {
 		field := t.Field(i)
-
-		// fmt.Printf("Name: %v, Type: %v, Kind: %v ", field.Name, field.Type, field.Type.Kind())
-
 		if field.Type.Kind() == reflect.Ptr {
-			// fmt.Printf("Elem: %v, %v\n", field.Type.Elem(), field.Type.Elem().Kind())
-
 			fields[field.Name] = &graphql.Field{}
 
 			if field.Type.Elem().Kind() == reflect.Struct {
@@ -142,7 +132,7 @@ func createCustomType(t reflect.Type) *graphql.Object {
 		Fields: fields,
 	})
 
-	markTypeAsProcessed(name, *object)
+	markTypeAsProcessed(name, object)
 
 	return object
 }
@@ -151,21 +141,15 @@ func createCustomInputType(t reflect.Type) *graphql.InputObject {
 	name := normalizeGraphQLName(t.String()) + "_inputType"
 	obj, err := lookupInputType(name)
 	if err == nil {
-		return &obj
+		return obj
 	}
 
 	fields := graphql.InputObjectConfigFieldMap{}
 
-	// fmt.Printf("IN - Kind: %v, Elem: %v\n", t.String(), t.Kind())
-
 	for i := 0; i < t.NumField(); i++ {
 		field := t.Field(i)
 
-		// fmt.Printf("Name: %v, Type: %v, Kind: %v ", field.Name, field.Type, field.Type.Kind())
-
 		if field.Type.Kind() == reflect.Ptr {
-			// fmt.Printf("Elem: %v, %v\n", field.Type.Elem(), field.Type.Elem().Kind())
-
 			fields[field.Name] = &graphql.InputObjectFieldConfig{}
 
 			if field.Type.Elem().Kind() == reflect.Struct {
@@ -192,7 +176,7 @@ func createCustomInputType(t reflect.Type) *graphql.InputObject {
 		},
 	)
 
-	markInputTypeAsProcessed(name, *inputObject)
+	markInputTypeAsProcessed(name, inputObject)
 
 	return inputObject
 }
@@ -201,8 +185,19 @@ func parseInputArg(t reflect.Type) graphql.FieldConfigArgument {
 	fields := graphql.FieldConfigArgument{}
 
 	if t.Kind() == reflect.Struct {
-		fields[normalizeGraphQLName(t.String())] = &graphql.ArgumentConfig{
-			Type: graphql.NewNonNull(createCustomInputType(t)),
+		name := normalizeGraphQLName(t.String()) + "_inputType"
+		obj, err := lookupInputType(name)
+		if err == nil {
+			fields[name] = &graphql.ArgumentConfig{
+				Type: graphql.NewNonNull(obj),
+			}
+		}
+
+		inputType := createCustomInputType(t)
+		markInputTypeAsProcessed(name, inputType)
+
+		fields[name] = &graphql.ArgumentConfig{
+			Type: graphql.NewNonNull(inputType),
 		}
 	} else {
 		fields[normalizeGraphQLName(t.String())] = &graphql.ArgumentConfig{
@@ -250,7 +245,6 @@ func parseFunction(t reflect.Type) *graphql.Field {
 	for o := 0; o < numOut; o++ {
 		// returnV := t.Out(o)
 		// fmt.Printf("OUT - Kind: %v Name: %v String: %v\n", returnV.Kind(), returnV.Name(), returnV.String())
-
 	}
 
 	field.Type = parseOutputArg(t.Out(0).Elem())
@@ -271,19 +265,13 @@ func main() {
 	s3Type := reflect.TypeOf(svc)
 	for i := 0; i < s3Type.NumMethod(); i++ {
 		method := s3Type.Method(i)
-		fmt.Println(method.Name)
 
-		// if strings.HasPrefix(method.Name, "Create") || strings.HasPrefix(method.Name, "Delete") {
-		// 	mutationFields[method.Name] = parseFunction(s3Type.Method(i).Type)
-		// } else
-		if strings.HasPrefix(method.Name, "Put") && !strings.HasSuffix(method.Name, "Request") && !strings.HasSuffix(method.Name, "WithContext") {
+		if !strings.HasSuffix(method.Name, "Request") && !strings.HasSuffix(method.Name, "WithContext") && (strings.HasPrefix(method.Name, "Create") || strings.HasPrefix(method.Name, "Delete")) {
+			mutationFields[method.Name] = parseFunction(s3Type.Method(i).Type)
+		} else if strings.HasPrefix(method.Name, "Put") && !strings.HasSuffix(method.Name, "Request") && !strings.HasSuffix(method.Name, "WithContext") {
 			queryFields[method.Name] = parseFunction(s3Type.Method(i).Type)
 		}
 	}
-
-	// x := reflect.TypeOf(svc.CreateBucket)
-
-	// fields["createBucket"] = parseFunction(x)
 
 	rootQuery := graphql.ObjectConfig{Name: "RootQuery", Fields: queryFields}
 	rootMutation := graphql.ObjectConfig{Name: "RootMutation", Fields: mutationFields}
