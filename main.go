@@ -9,6 +9,7 @@ import (
 	"reflect"
 	"strings"
 
+	typesCache "github.com/RafalWilinski/aws-as-graphql/typescache"
 	"github.com/RafalWilinski/aws-as-graphql/utils"
 	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/aws/aws-sdk-go/service/s3"
@@ -20,7 +21,7 @@ func createCustomType(t reflect.Type) *graphql.Object {
 	t = utils.NormalizePointerType(t)
 	name := utils.NormalizeGraphQLName(t.String())
 
-	obj, err := lookupType(name)
+	obj, err := typesCache.LookupType(name)
 	if err == nil {
 		return obj
 	}
@@ -75,7 +76,7 @@ func createCustomType(t reflect.Type) *graphql.Object {
 		Fields: fields,
 	})
 
-	markTypeAsProcessed(name, object)
+	typesCache.MarkTypeAsProcessed(name, object)
 
 	return object
 }
@@ -83,7 +84,7 @@ func createCustomType(t reflect.Type) *graphql.Object {
 func createCustomInputType(t reflect.Type) *graphql.InputObject {
 	t = utils.NormalizePointerType(t)
 	name := utils.NormalizeInputName(utils.NormalizeGraphQLName(t.String()))
-	obj, err := lookupInputType(name)
+	obj, err := typesCache.LookupInputType(name)
 	if err == nil {
 		return obj
 	}
@@ -140,7 +141,7 @@ func createCustomInputType(t reflect.Type) *graphql.InputObject {
 		},
 	)
 
-	markInputTypeAsProcessed(name, inputObject)
+	typesCache.MarkInputTypeAsProcessed(name, inputObject)
 
 	return inputObject
 }
@@ -150,7 +151,7 @@ func parseInputArg(t reflect.Type) graphql.FieldConfigArgument {
 
 	if t.Kind() == reflect.Struct {
 		name := utils.NormalizeInputName(utils.NormalizeGraphQLName(t.String()))
-		obj, err := lookupInputType(name)
+		obj, err := typesCache.LookupInputType(name)
 		if err == nil {
 			fields["data"] = &graphql.ArgumentConfig{
 				Type: graphql.NewNonNull(obj),
@@ -158,7 +159,7 @@ func parseInputArg(t reflect.Type) graphql.FieldConfigArgument {
 		}
 
 		inputType := createCustomInputType(t)
-		markInputTypeAsProcessed(name, inputType)
+		typesCache.MarkInputTypeAsProcessed(name, inputType)
 
 		fields["data"] = &graphql.ArgumentConfig{
 			Type: graphql.NewNonNull(inputType),
@@ -221,11 +222,8 @@ func parseFunction(t reflect.Type) *graphql.Field {
 
 }
 
-func main() {
-	sess, err := session.NewSession()
-	if err != nil {
-		// Handle Session creation error
-	}
+func buildSchema() {
+	sess, _ := session.NewSession()
 	svc := s3.New(sess)
 	queryFields := graphql.Fields{}
 	mutationFields := graphql.Fields{}
@@ -234,13 +232,14 @@ func main() {
 	for i := 0; i < s3Type.NumMethod(); i++ {
 		method := s3Type.Method(i)
 
+		// Filter redundant functions and helper functions
 		if strings.HasSuffix(method.Name, "Request") || strings.HasSuffix(method.Name, "WithContext") {
 			continue
 		}
 
 		if strings.HasPrefix(method.Name, "Create") || strings.HasPrefix(method.Name, "Delete") || strings.HasPrefix(method.Name, "Put") {
 			mutationFields[method.Name] = parseFunction(s3Type.Method(i).Type)
-		} else if strings.HasPrefix(method.Name, "List") || strings.HasPrefix(method.Name, "Describe") {
+		} else if strings.HasPrefix(method.Name, "Get") || strings.HasPrefix(method.Name, "List") || strings.HasPrefix(method.Name, "Describe") {
 			queryFields[method.Name] = parseFunction(s3Type.Method(i).Type)
 		}
 	}
@@ -275,6 +274,5 @@ func main() {
 		if err != nil {
 			log.Fatalf("ERROR: %v", err)
 		}
-
 	}
 }
