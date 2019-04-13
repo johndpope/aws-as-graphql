@@ -1,10 +1,7 @@
 package main
 
 import (
-	"bytes"
-	"context"
 	"encoding/json"
-	"errors"
 	"fmt"
 	"io/ioutil"
 	"log"
@@ -12,127 +9,16 @@ import (
 	"reflect"
 	"strings"
 
-	"github.com/aws/aws-lambda-go/events"
+	"github.com/RafalWilinski/aws-as-graphql/utils"
 	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/aws/aws-sdk-go/service/s3"
 	"github.com/graphql-go/graphql"
 	"github.com/graphql-go/graphql/testutil"
 )
 
-// Response is of type APIGatewayProxyResponse since we're leveraging the
-// AWS Lambda Proxy Request functionality (default behavior)
-//
-// https://serverless.com/framework/docs/providers/aws/events/apigateway/#lambda-proxy-integration
-type Response events.APIGatewayProxyResponse
-
-// Handler is our lambda handler invoked by the `lambda.Start` function call
-func Handler(ctx context.Context) (Response, error) {
-	var buf bytes.Buffer
-
-	body, err := json.Marshal(map[string]interface{}{
-		"message": "Go Serverless v1.0! Your function executed successfully!",
-	})
-	if err != nil {
-		return Response{StatusCode: 404}, err
-	}
-
-	json.HTMLEscape(&buf, body)
-
-	resp := Response{
-		StatusCode:      200,
-		IsBase64Encoded: false,
-		Body:            buf.String(),
-		Headers: map[string]string{
-			"Content-Type": "application/json",
-		},
-	}
-
-	return resp, nil
-}
-
-var processedTypes = make(map[string]*graphql.Object)
-var processedInputTypes = make(map[string]*graphql.InputObject)
-
-func lookupInputType(s string) (*graphql.InputObject, error) {
-	if val, ok := processedInputTypes[s]; ok {
-		return val, nil
-	}
-
-	return nil, errors.New("NOT_FOUND")
-}
-
-func lookupType(s string) (*graphql.Object, error) {
-	if val, ok := processedTypes[s]; ok {
-		return val, nil
-	}
-
-	return nil, errors.New("NOT_FOUND")
-}
-
-func markTypeAsProcessed(s string, item *graphql.Object) {
-	processedTypes[s] = item
-}
-
-func markInputTypeAsProcessed(s string, item *graphql.InputObject) {
-	processedInputTypes[s] = item
-}
-
-func normalizeGraphQLName(str string) string {
-	return strings.Replace(str, ".", "_", -1)
-}
-
-func normalizeInputName(str string) string {
-	if strings.HasSuffix(str, "Input") {
-		return str
-	}
-
-	return str + "Input"
-}
-
-func convertPrimitiveToGraphQLType(t reflect.Type) *graphql.Scalar {
-	if t.Kind() == reflect.Ptr {
-		t = t.Elem()
-	}
-
-	switch t.Kind() {
-	case reflect.String:
-		return graphql.String
-	case reflect.Bool:
-		return graphql.Boolean
-	case reflect.Int:
-		return graphql.Int
-	case reflect.Int16:
-		return graphql.Int
-	case reflect.Int32:
-		return graphql.Int
-	case reflect.Int64:
-		return graphql.Int
-	case reflect.Uint8:
-		return graphql.Int
-	case reflect.Uint16:
-		return graphql.Int
-	case reflect.Uint32:
-		return graphql.Int
-	case reflect.Uint64:
-		return graphql.Int
-	}
-
-	fmt.Printf("Unhandled primitive type: %v\n", t.Kind().String())
-
-	return graphql.String
-}
-
-func normalizePointerType(t reflect.Type) reflect.Type {
-	if t.Kind() == reflect.Ptr {
-		return t.Elem()
-	}
-
-	return t
-}
-
 func createCustomType(t reflect.Type) *graphql.Object {
-	t = normalizePointerType(t)
-	name := normalizeGraphQLName(t.String())
+	t = utils.NormalizePointerType(t)
+	name := utils.NormalizeGraphQLName(t.String())
 
 	obj, err := lookupType(name)
 	if err == nil {
@@ -143,33 +29,31 @@ func createCustomType(t reflect.Type) *graphql.Object {
 
 	for i := 0; i < t.NumField(); i++ {
 		field := t.Field(i)
-		if field.Name == "_" {
+		if field.Name == "_" || field.Name == "__" {
 			continue
 		}
 
 		fields[field.Name] = &graphql.Field{}
 
-		fieldType := normalizePointerType(field.Type)
+		fieldType := utils.NormalizePointerType(field.Type)
 		fieldKind := fieldType.Kind()
-
-		fmt.Printf("%v %v\n", fieldType, fieldKind)
 
 		var graphqlType graphql.Output
 
 		if fieldKind == reflect.Struct {
 			graphqlType = createCustomType(fieldType)
 		} else if fieldKind == reflect.Slice {
-			sliceElement := normalizePointerType(fieldType.Elem())
+			sliceElement := utils.NormalizePointerType(fieldType.Elem())
 
 			if sliceElement.Kind() == reflect.Struct {
 				graphqlType = graphql.NewList(createCustomType(sliceElement))
 			} else {
-				graphqlType = graphql.NewList(convertPrimitiveToGraphQLType(sliceElement))
+				graphqlType = graphql.NewList(utils.ConvertPrimitiveToGraphQLType(sliceElement))
 			}
 		} else if fieldKind == reflect.Interface {
 			continue
 		} else {
-			graphqlType = convertPrimitiveToGraphQLType(fieldType)
+			graphqlType = utils.ConvertPrimitiveToGraphQLType(fieldType)
 		}
 
 		if field.Tag.Get("required") == "true" {
@@ -197,8 +81,8 @@ func createCustomType(t reflect.Type) *graphql.Object {
 }
 
 func createCustomInputType(t reflect.Type) *graphql.InputObject {
-	t = normalizePointerType(t)
-	name := normalizeInputName(normalizeGraphQLName(t.String()))
+	t = utils.NormalizePointerType(t)
+	name := utils.NormalizeInputName(utils.NormalizeGraphQLName(t.String()))
 	obj, err := lookupInputType(name)
 	if err == nil {
 		return obj
@@ -214,27 +98,25 @@ func createCustomInputType(t reflect.Type) *graphql.InputObject {
 
 		fields[field.Name] = &graphql.InputObjectFieldConfig{}
 
-		fieldType := normalizePointerType(field.Type)
+		fieldType := utils.NormalizePointerType(field.Type)
 		fieldKind := fieldType.Kind()
-
-		fmt.Printf("%v %v\n", fieldType, fieldKind)
 
 		var graphqlType graphql.Output
 
 		if fieldKind == reflect.Struct {
 			graphqlType = createCustomInputType(fieldType)
 		} else if fieldKind == reflect.Slice {
-			sliceElement := normalizePointerType(fieldType.Elem())
+			sliceElement := utils.NormalizePointerType(fieldType.Elem())
 
 			if sliceElement.Kind() == reflect.Struct {
 				graphqlType = graphql.NewList(createCustomInputType(sliceElement))
 			} else {
-				graphqlType = graphql.NewList(convertPrimitiveToGraphQLType(sliceElement))
+				graphqlType = graphql.NewList(utils.ConvertPrimitiveToGraphQLType(sliceElement))
 			}
 		} else if fieldKind == reflect.Interface {
-			continue
+			graphqlType = graphql.String
 		} else {
-			graphqlType = convertPrimitiveToGraphQLType(fieldType)
+			graphqlType = utils.ConvertPrimitiveToGraphQLType(fieldType)
 		}
 
 		if field.Tag.Get("required") == "true" {
@@ -267,7 +149,7 @@ func parseInputArg(t reflect.Type) graphql.FieldConfigArgument {
 	fields := graphql.FieldConfigArgument{}
 
 	if t.Kind() == reflect.Struct {
-		name := normalizeInputName(normalizeGraphQLName(t.String()))
+		name := utils.NormalizeInputName(utils.NormalizeGraphQLName(t.String()))
 		obj, err := lookupInputType(name)
 		if err == nil {
 			fields["data"] = &graphql.ArgumentConfig{
@@ -282,8 +164,8 @@ func parseInputArg(t reflect.Type) graphql.FieldConfigArgument {
 			Type: graphql.NewNonNull(inputType),
 		}
 	} else {
-		fields[normalizeGraphQLName(t.String())] = &graphql.ArgumentConfig{
-			Type: graphql.NewNonNull(convertPrimitiveToGraphQLType(t)),
+		fields[utils.NormalizeGraphQLName(t.String())] = &graphql.ArgumentConfig{
+			Type: graphql.NewNonNull(utils.ConvertPrimitiveToGraphQLType(t)),
 		}
 	}
 
@@ -294,17 +176,17 @@ func parseOutputArg(t reflect.Type) *graphql.Object {
 	fields := graphql.Fields{}
 
 	if t.Kind() == reflect.Struct {
-		fields[normalizeGraphQLName(t.String())] = &graphql.Field{
+		fields[utils.NormalizeGraphQLName(t.String())] = &graphql.Field{
 			Type: graphql.NewNonNull(createCustomType(t)),
 		}
 	} else {
-		fields[normalizeGraphQLName(t.String())] = &graphql.Field{
-			Type: graphql.NewNonNull(convertPrimitiveToGraphQLType(t)),
+		fields[utils.NormalizeGraphQLName(t.String())] = &graphql.Field{
+			Type: graphql.NewNonNull(utils.ConvertPrimitiveToGraphQLType(t)),
 		}
 	}
 
 	out := graphql.NewObject(graphql.ObjectConfig{
-		Name:   normalizeGraphQLName(t.String()) + "Response",
+		Name:   utils.NormalizeGraphQLName(t.String()) + "Response",
 		Fields: fields,
 	})
 
@@ -324,7 +206,7 @@ func parseFunction(t reflect.Type) *graphql.Field {
 
 		field.Args = parseInputArg(inV.Elem())
 	}
-	outParam := normalizePointerType(t.Out(0))
+	outParam := utils.NormalizePointerType(t.Out(0))
 
 	fmt.Printf("%v, %v\n", outParam.String(), outParam.Kind().String())
 
@@ -395,6 +277,4 @@ func main() {
 		}
 
 	}
-
-	// lambda.Start(Handler)
 }

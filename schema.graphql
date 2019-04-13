@@ -1,0 +1,1651 @@
+schema {
+  query: RootQuery
+  mutation: RootMutation
+}
+
+type RootMutation {
+  CreateBucket(data: s3_CreateBucketInput!): s3_CreateBucketOutputResponse
+  CreateMultipartUpload(data: s3_CreateMultipartUploadInput!): s3_CreateMultipartUploadOutputResponse
+  DeleteBucket(data: s3_DeleteBucketInput!): s3_DeleteBucketOutputResponse
+  DeleteBucketAnalyticsConfiguration(data: s3_DeleteBucketAnalyticsConfigurationInput!): s3_DeleteBucketAnalyticsConfigurationOutputResponse
+  DeleteBucketCors(data: s3_DeleteBucketCorsInput!): s3_DeleteBucketCorsOutputResponse
+  DeleteBucketEncryption(data: s3_DeleteBucketEncryptionInput!): s3_DeleteBucketEncryptionOutputResponse
+  DeleteBucketInventoryConfiguration(data: s3_DeleteBucketInventoryConfigurationInput!): s3_DeleteBucketInventoryConfigurationOutputResponse
+  DeleteBucketLifecycle(data: s3_DeleteBucketLifecycleInput!): s3_DeleteBucketLifecycleOutputResponse
+  DeleteBucketMetricsConfiguration(data: s3_DeleteBucketMetricsConfigurationInput!): s3_DeleteBucketMetricsConfigurationOutputResponse
+  DeleteBucketPolicy(data: s3_DeleteBucketPolicyInput!): s3_DeleteBucketPolicyOutputResponse
+  DeleteBucketReplication(data: s3_DeleteBucketReplicationInput!): s3_DeleteBucketReplicationOutputResponse
+  DeleteBucketTagging(data: s3_DeleteBucketTaggingInput!): s3_DeleteBucketTaggingOutputResponse
+  DeleteBucketWebsite(data: s3_DeleteBucketWebsiteInput!): s3_DeleteBucketWebsiteOutputResponse
+  DeleteObject(data: s3_DeleteObjectInput!): s3_DeleteObjectOutputResponse
+  DeleteObjectTagging(data: s3_DeleteObjectTaggingInput!): s3_DeleteObjectTaggingOutputResponse
+  DeleteObjects(data: s3_DeleteObjectsInput!): s3_DeleteObjectsOutputResponse
+  DeletePublicAccessBlock(data: s3_DeletePublicAccessBlockInput!): s3_DeletePublicAccessBlockOutputResponse
+  PutBucketAccelerateConfiguration(data: s3_PutBucketAccelerateConfigurationInput!): s3_PutBucketAccelerateConfigurationOutputResponse
+  PutBucketAcl(data: s3_PutBucketAclInput!): s3_PutBucketAclOutputResponse
+  PutBucketAnalyticsConfiguration(data: s3_PutBucketAnalyticsConfigurationInput!): s3_PutBucketAnalyticsConfigurationOutputResponse
+  PutBucketCors(data: s3_PutBucketCorsInput!): s3_PutBucketCorsOutputResponse
+  PutBucketEncryption(data: s3_PutBucketEncryptionInput!): s3_PutBucketEncryptionOutputResponse
+  PutBucketInventoryConfiguration(data: s3_PutBucketInventoryConfigurationInput!): s3_PutBucketInventoryConfigurationOutputResponse
+  PutBucketLifecycle(data: s3_PutBucketLifecycleInput!): s3_PutBucketLifecycleOutputResponse
+  PutBucketLifecycleConfiguration(data: s3_PutBucketLifecycleConfigurationInput!): s3_PutBucketLifecycleConfigurationOutputResponse
+  PutBucketLogging(data: s3_PutBucketLoggingInput!): s3_PutBucketLoggingOutputResponse
+  PutBucketMetricsConfiguration(data: s3_PutBucketMetricsConfigurationInput!): s3_PutBucketMetricsConfigurationOutputResponse
+  PutBucketNotification(data: s3_PutBucketNotificationInput!): s3_PutBucketNotificationOutputResponse
+  PutBucketNotificationConfiguration(data: s3_PutBucketNotificationConfigurationInput!): s3_PutBucketNotificationConfigurationOutputResponse
+  PutBucketPolicy(data: s3_PutBucketPolicyInput!): s3_PutBucketPolicyOutputResponse
+  PutBucketReplication(data: s3_PutBucketReplicationInput!): s3_PutBucketReplicationOutputResponse
+  PutBucketRequestPayment(data: s3_PutBucketRequestPaymentInput!): s3_PutBucketRequestPaymentOutputResponse
+  PutBucketTagging(data: s3_PutBucketTaggingInput!): s3_PutBucketTaggingOutputResponse
+  PutBucketVersioning(data: s3_PutBucketVersioningInput!): s3_PutBucketVersioningOutputResponse
+  PutBucketWebsite(data: s3_PutBucketWebsiteInput!): s3_PutBucketWebsiteOutputResponse
+  PutObject(data: s3_PutObjectInput!): s3_PutObjectOutputResponse
+  PutObjectAcl(data: s3_PutObjectAclInput!): s3_PutObjectAclOutputResponse
+  PutObjectLegalHold(data: s3_PutObjectLegalHoldInput!): s3_PutObjectLegalHoldOutputResponse
+  PutObjectLockConfiguration(data: s3_PutObjectLockConfigurationInput!): s3_PutObjectLockConfigurationOutputResponse
+  PutObjectRetention(data: s3_PutObjectRetentionInput!): s3_PutObjectRetentionOutputResponse
+  PutObjectTagging(data: s3_PutObjectTaggingInput!): s3_PutObjectTaggingOutputResponse
+  PutPublicAccessBlock(data: s3_PutPublicAccessBlockInput!): s3_PutPublicAccessBlockOutputResponse
+}
+
+type RootQuery {
+  ListBucketAnalyticsConfigurations(data: s3_ListBucketAnalyticsConfigurationsInput!): s3_ListBucketAnalyticsConfigurationsOutputResponse
+  ListBucketInventoryConfigurations(data: s3_ListBucketInventoryConfigurationsInput!): s3_ListBucketInventoryConfigurationsOutputResponse
+  ListBucketMetricsConfigurations(data: s3_ListBucketMetricsConfigurationsInput!): s3_ListBucketMetricsConfigurationsOutputResponse
+  ListBuckets(data: s3_ListBucketsInput!): s3_ListBucketsOutputResponse
+  ListMultipartUploads(data: s3_ListMultipartUploadsInput!): s3_ListMultipartUploadsOutputResponse
+  ListMultipartUploadsPages(data: s3_ListMultipartUploadsInput!): Boolean
+  ListObjectVersions(data: s3_ListObjectVersionsInput!): s3_ListObjectVersionsOutputResponse
+  ListObjectVersionsPages(data: s3_ListObjectVersionsInput!): Boolean
+  ListObjects(data: s3_ListObjectsInput!): s3_ListObjectsOutputResponse
+  ListObjectsPages(data: s3_ListObjectsInput!): Boolean
+  ListObjectsV2(data: s3_ListObjectsV2Input!): s3_ListObjectsV2OutputResponse
+  ListObjectsV2Pages(data: s3_ListObjectsV2Input!): Boolean
+  ListParts(data: s3_ListPartsInput!): s3_ListPartsOutputResponse
+  ListPartsPages(data: s3_ListPartsInput!): Boolean
+}
+
+input s3_AbortIncompleteMultipartUploadInput {
+  DaysAfterInitiation: Int
+}
+
+input s3_AccelerateConfigurationInput {
+  Status: String
+}
+
+input s3_AccessControlPolicyInput {
+  Grants: [s3_GrantInput]
+  Owner: s3_OwnerInput
+}
+
+input s3_AccessControlTranslationInput {
+  Owner: String!
+}
+
+type s3_AnalyticsAndOperator {
+  Prefix: String
+  Tags: [s3_Tag]
+}
+
+input s3_AnalyticsAndOperatorInput {
+  Tags: [s3_TagInput]
+  Prefix: String
+}
+
+type s3_AnalyticsConfiguration {
+  Filter: s3_AnalyticsFilter
+  Id: String!
+  StorageClassAnalysis: s3_StorageClassAnalysis!
+}
+
+input s3_AnalyticsConfigurationInput {
+  Id: String!
+  StorageClassAnalysis: s3_StorageClassAnalysisInput!
+  Filter: s3_AnalyticsFilterInput
+}
+
+type s3_AnalyticsExportDestination {
+  S3BucketDestination: s3_AnalyticsS3BucketDestination!
+}
+
+input s3_AnalyticsExportDestinationInput {
+  S3BucketDestination: s3_AnalyticsS3BucketDestinationInput!
+}
+
+type s3_AnalyticsFilter {
+  And: s3_AnalyticsAndOperator
+  Prefix: String
+  Tag: s3_Tag
+}
+
+input s3_AnalyticsFilterInput {
+  And: s3_AnalyticsAndOperatorInput
+  Prefix: String
+  Tag: s3_TagInput
+}
+
+type s3_AnalyticsS3BucketDestination {
+  Bucket: String!
+  BucketAccountId: String
+  Format: String!
+  Prefix: String
+}
+
+input s3_AnalyticsS3BucketDestinationInput {
+  Bucket: String!
+  BucketAccountId: String
+  Format: String!
+  Prefix: String
+}
+
+type s3_Bucket {
+  CreationDate: time_Time
+  Name: String
+}
+
+input s3_BucketLifecycleConfigurationInput {
+  Rules: [s3_LifecycleRuleInput]!
+}
+
+input s3_BucketLoggingStatusInput {
+  LoggingEnabled: s3_LoggingEnabledInput
+}
+
+input s3_CloudFunctionConfigurationInput {
+  Event: String
+  Events: [String]
+  Id: String
+  InvocationRole: String
+  CloudFunction: String
+}
+
+type s3_CommonPrefix {
+  Prefix: String
+}
+
+input s3_ConditionInput {
+  HttpErrorCodeReturnedEquals: String
+  KeyPrefixEquals: String
+}
+
+input s3_CORSConfigurationInput {
+  CORSRules: [s3_CORSRuleInput]!
+}
+
+input s3_CORSRuleInput {
+  AllowedHeaders: [String]
+  AllowedMethods: [String]!
+  AllowedOrigins: [String]!
+  ExposeHeaders: [String]
+  MaxAgeSeconds: Int
+}
+
+input s3_CreateBucketConfigurationInput {
+  LocationConstraint: String
+}
+
+input s3_CreateBucketInput {
+  GrantWrite: String
+  GrantFullControl: String
+  GrantWriteACP: String
+  ObjectLockEnabledForBucket: Boolean
+  ACL: String
+  CreateBucketConfiguration: s3_CreateBucketConfigurationInput
+  Bucket: String!
+  GrantRead: String
+  GrantReadACP: String
+}
+
+type s3_CreateBucketOutput {
+  Location: String
+}
+
+type s3_CreateBucketOutputResponse {
+  s3_CreateBucketOutput: s3_CreateBucketOutput!
+}
+
+input s3_CreateMultipartUploadInput {
+  GrantFullControl: String
+  GrantRead: String
+  ObjectLockLegalHoldStatus: String
+  SSECustomerAlgorithm: String
+  Metadata: String
+  SSECustomerKey: String
+  SSECustomerKeyMD5: String
+  Expires: time_TimeInput
+  RequestPayer: String
+  CacheControl: String
+  Key: String!
+  ServerSideEncryption: String
+  ACL: String
+  ContentEncoding: String
+  ObjectLockRetainUntilDate: time_TimeInput
+  Tagging: String
+  Bucket: String!
+  ContentLanguage: String
+  GrantWriteACP: String
+  StorageClass: String
+  GrantReadACP: String
+  ContentType: String
+  ContentDisposition: String
+  WebsiteRedirectLocation: String
+  ObjectLockMode: String
+  SSEKMSKeyId: String
+}
+
+type s3_CreateMultipartUploadOutput {
+  AbortDate: time_Time
+  AbortRuleId: String
+  Bucket: String
+  Key: String
+  RequestCharged: String
+  SSECustomerAlgorithm: String
+  SSECustomerKeyMD5: String
+  SSEKMSKeyId: String
+  ServerSideEncryption: String
+  UploadId: String
+}
+
+type s3_CreateMultipartUploadOutputResponse {
+  s3_CreateMultipartUploadOutput: s3_CreateMultipartUploadOutput!
+}
+
+input s3_DefaultRetentionInput {
+  Days: Int
+  Mode: String
+  Years: Int
+}
+
+input s3_DeleteBucketAnalyticsConfigurationInput {
+  Id: String!
+  Bucket: String!
+}
+
+type s3_DeleteBucketAnalyticsConfigurationOutput {
+  """NOT YET IMPLEMENTED (probably array)"""
+  Empty: Boolean
+}
+
+type s3_DeleteBucketAnalyticsConfigurationOutputResponse {
+  s3_DeleteBucketAnalyticsConfigurationOutput: s3_DeleteBucketAnalyticsConfigurationOutput!
+}
+
+input s3_DeleteBucketCorsInput {
+  Bucket: String!
+}
+
+type s3_DeleteBucketCorsOutput {
+  """NOT YET IMPLEMENTED (probably array)"""
+  Empty: Boolean
+}
+
+type s3_DeleteBucketCorsOutputResponse {
+  s3_DeleteBucketCorsOutput: s3_DeleteBucketCorsOutput!
+}
+
+input s3_DeleteBucketEncryptionInput {
+  Bucket: String!
+}
+
+type s3_DeleteBucketEncryptionOutput {
+  """NOT YET IMPLEMENTED (probably array)"""
+  Empty: Boolean
+}
+
+type s3_DeleteBucketEncryptionOutputResponse {
+  s3_DeleteBucketEncryptionOutput: s3_DeleteBucketEncryptionOutput!
+}
+
+input s3_DeleteBucketInput {
+  Bucket: String!
+}
+
+input s3_DeleteBucketInventoryConfigurationInput {
+  Bucket: String!
+  Id: String!
+}
+
+type s3_DeleteBucketInventoryConfigurationOutput {
+  """NOT YET IMPLEMENTED (probably array)"""
+  Empty: Boolean
+}
+
+type s3_DeleteBucketInventoryConfigurationOutputResponse {
+  s3_DeleteBucketInventoryConfigurationOutput: s3_DeleteBucketInventoryConfigurationOutput!
+}
+
+input s3_DeleteBucketLifecycleInput {
+  Bucket: String!
+}
+
+type s3_DeleteBucketLifecycleOutput {
+  """NOT YET IMPLEMENTED (probably array)"""
+  Empty: Boolean
+}
+
+type s3_DeleteBucketLifecycleOutputResponse {
+  s3_DeleteBucketLifecycleOutput: s3_DeleteBucketLifecycleOutput!
+}
+
+input s3_DeleteBucketMetricsConfigurationInput {
+  Id: String!
+  Bucket: String!
+}
+
+type s3_DeleteBucketMetricsConfigurationOutput {
+  """NOT YET IMPLEMENTED (probably array)"""
+  Empty: Boolean
+}
+
+type s3_DeleteBucketMetricsConfigurationOutputResponse {
+  s3_DeleteBucketMetricsConfigurationOutput: s3_DeleteBucketMetricsConfigurationOutput!
+}
+
+type s3_DeleteBucketOutput {
+  """NOT YET IMPLEMENTED (probably array)"""
+  Empty: Boolean
+}
+
+type s3_DeleteBucketOutputResponse {
+  s3_DeleteBucketOutput: s3_DeleteBucketOutput!
+}
+
+input s3_DeleteBucketPolicyInput {
+  Bucket: String!
+}
+
+type s3_DeleteBucketPolicyOutput {
+  """NOT YET IMPLEMENTED (probably array)"""
+  Empty: Boolean
+}
+
+type s3_DeleteBucketPolicyOutputResponse {
+  s3_DeleteBucketPolicyOutput: s3_DeleteBucketPolicyOutput!
+}
+
+input s3_DeleteBucketReplicationInput {
+  Bucket: String!
+}
+
+type s3_DeleteBucketReplicationOutput {
+  """NOT YET IMPLEMENTED (probably array)"""
+  Empty: Boolean
+}
+
+type s3_DeleteBucketReplicationOutputResponse {
+  s3_DeleteBucketReplicationOutput: s3_DeleteBucketReplicationOutput!
+}
+
+input s3_DeleteBucketTaggingInput {
+  Bucket: String!
+}
+
+type s3_DeleteBucketTaggingOutput {
+  """NOT YET IMPLEMENTED (probably array)"""
+  Empty: Boolean
+}
+
+type s3_DeleteBucketTaggingOutputResponse {
+  s3_DeleteBucketTaggingOutput: s3_DeleteBucketTaggingOutput!
+}
+
+input s3_DeleteBucketWebsiteInput {
+  Bucket: String!
+}
+
+type s3_DeleteBucketWebsiteOutput {
+  """NOT YET IMPLEMENTED (probably array)"""
+  Empty: Boolean
+}
+
+type s3_DeleteBucketWebsiteOutputResponse {
+  s3_DeleteBucketWebsiteOutput: s3_DeleteBucketWebsiteOutput!
+}
+
+type s3_DeletedObject {
+  DeleteMarker: Boolean
+  DeleteMarkerVersionId: String
+  Key: String
+  VersionId: String
+}
+
+input s3_DeleteInput {
+  Objects: [s3_ObjectIdentifierInput]!
+  Quiet: Boolean
+}
+
+type s3_DeleteMarkerEntry {
+  IsLatest: Boolean
+  Key: String
+  LastModified: time_Time
+  Owner: s3_Owner
+  VersionId: String
+}
+
+input s3_DeleteMarkerReplicationInput {
+  Status: String
+}
+
+input s3_DeleteObjectInput {
+  VersionId: String
+  Bucket: String!
+  BypassGovernanceRetention: Boolean
+  Key: String!
+  MFA: String
+  RequestPayer: String
+}
+
+type s3_DeleteObjectOutput {
+  DeleteMarker: Boolean
+  RequestCharged: String
+  VersionId: String
+}
+
+type s3_DeleteObjectOutputResponse {
+  s3_DeleteObjectOutput: s3_DeleteObjectOutput!
+}
+
+input s3_DeleteObjectsInput {
+  BypassGovernanceRetention: Boolean
+  Delete: s3_DeleteInput!
+  MFA: String
+  RequestPayer: String
+  Bucket: String!
+}
+
+type s3_DeleteObjectsOutput {
+  Deleted: [s3_DeletedObject]
+  Errors: [s3_Error]
+  RequestCharged: String
+}
+
+type s3_DeleteObjectsOutputResponse {
+  s3_DeleteObjectsOutput: s3_DeleteObjectsOutput!
+}
+
+input s3_DeleteObjectTaggingInput {
+  Bucket: String!
+  Key: String!
+  VersionId: String
+}
+
+type s3_DeleteObjectTaggingOutput {
+  VersionId: String
+}
+
+type s3_DeleteObjectTaggingOutputResponse {
+  s3_DeleteObjectTaggingOutput: s3_DeleteObjectTaggingOutput!
+}
+
+input s3_DeletePublicAccessBlockInput {
+  Bucket: String!
+}
+
+type s3_DeletePublicAccessBlockOutput {
+  """NOT YET IMPLEMENTED (probably array)"""
+  Empty: Boolean
+}
+
+type s3_DeletePublicAccessBlockOutputResponse {
+  s3_DeletePublicAccessBlockOutput: s3_DeletePublicAccessBlockOutput!
+}
+
+input s3_DestinationInput {
+  Bucket: String!
+  EncryptionConfiguration: s3_EncryptionConfigurationInput
+  StorageClass: String
+  AccessControlTranslation: s3_AccessControlTranslationInput
+  Account: String
+}
+
+input s3_EncryptionConfigurationInput {
+  ReplicaKmsKeyID: String
+}
+
+type s3_Error {
+  Code: String
+  Key: String
+  Message: String
+  VersionId: String
+}
+
+input s3_ErrorDocumentInput {
+  Key: String!
+}
+
+input s3_FilterRuleInput {
+  Name: String
+  Value: String
+}
+
+input s3_GranteeInput {
+  ID: String
+  Type: String!
+  URI: String
+  DisplayName: String
+  EmailAddress: String
+}
+
+input s3_GrantInput {
+  Permission: String
+  Grantee: s3_GranteeInput
+}
+
+input s3_IndexDocumentInput {
+  Suffix: String!
+}
+
+type s3_Initiator {
+  DisplayName: String
+  ID: String
+}
+
+type s3_InventoryConfiguration {
+  Destination: s3_InventoryDestination!
+  Filter: s3_InventoryFilter
+  Id: String!
+  IncludedObjectVersions: String!
+  IsEnabled: Boolean!
+  OptionalFields: [String]
+  Schedule: s3_InventorySchedule!
+}
+
+input s3_InventoryConfigurationInput {
+  Id: String!
+  IncludedObjectVersions: String!
+  IsEnabled: Boolean!
+  OptionalFields: [String]
+  Schedule: s3_InventoryScheduleInput!
+  Destination: s3_InventoryDestinationInput!
+  Filter: s3_InventoryFilterInput
+}
+
+type s3_InventoryDestination {
+  S3BucketDestination: s3_InventoryS3BucketDestination!
+}
+
+input s3_InventoryDestinationInput {
+  S3BucketDestination: s3_InventoryS3BucketDestinationInput!
+}
+
+type s3_InventoryEncryption {
+  SSEKMS: s3_SSEKMS
+  SSES3: s3_SSES3
+}
+
+input s3_InventoryEncryptionInput {
+  SSEKMS: s3_SSEKMSInput
+  SSES3: s3_SSES3Input
+}
+
+type s3_InventoryFilter {
+  Prefix: String!
+}
+
+input s3_InventoryFilterInput {
+  Prefix: String!
+}
+
+type s3_InventoryS3BucketDestination {
+  AccountId: String
+  Bucket: String!
+  Encryption: s3_InventoryEncryption
+  Format: String!
+  Prefix: String
+}
+
+input s3_InventoryS3BucketDestinationInput {
+  Prefix: String
+  AccountId: String
+  Bucket: String!
+  Encryption: s3_InventoryEncryptionInput
+  Format: String!
+}
+
+type s3_InventorySchedule {
+  Frequency: String!
+}
+
+input s3_InventoryScheduleInput {
+  Frequency: String!
+}
+
+input s3_KeyFilterInput {
+  FilterRules: [s3_FilterRuleInput]
+}
+
+input s3_LambdaFunctionConfigurationInput {
+  Filter: s3_NotificationConfigurationFilterInput
+  Id: String
+  LambdaFunctionArn: String!
+  Events: [String]!
+}
+
+input s3_LifecycleConfigurationInput {
+  Rules: [s3_RuleInput]!
+}
+
+input s3_LifecycleExpirationInput {
+  Date: time_TimeInput
+  Days: Int
+  ExpiredObjectDeleteMarker: Boolean
+}
+
+input s3_LifecycleRuleAndOperatorInput {
+  Prefix: String
+  Tags: [s3_TagInput]
+}
+
+input s3_LifecycleRuleFilterInput {
+  Prefix: String
+  Tag: s3_TagInput
+  And: s3_LifecycleRuleAndOperatorInput
+}
+
+input s3_LifecycleRuleInput {
+  Transitions: [s3_TransitionInput]
+  Expiration: s3_LifecycleExpirationInput
+  NoncurrentVersionTransitions: [s3_NoncurrentVersionTransitionInput]
+  NoncurrentVersionExpiration: s3_NoncurrentVersionExpirationInput
+  AbortIncompleteMultipartUpload: s3_AbortIncompleteMultipartUploadInput
+  ID: String
+  Status: String!
+  Prefix: String
+  Filter: s3_LifecycleRuleFilterInput
+}
+
+input s3_ListBucketAnalyticsConfigurationsInput {
+  Bucket: String!
+  ContinuationToken: String
+}
+
+type s3_ListBucketAnalyticsConfigurationsOutput {
+  AnalyticsConfigurationList: [s3_AnalyticsConfiguration]
+  ContinuationToken: String
+  IsTruncated: Boolean
+  NextContinuationToken: String
+}
+
+type s3_ListBucketAnalyticsConfigurationsOutputResponse {
+  s3_ListBucketAnalyticsConfigurationsOutput: s3_ListBucketAnalyticsConfigurationsOutput!
+}
+
+input s3_ListBucketInventoryConfigurationsInput {
+  Bucket: String!
+  ContinuationToken: String
+}
+
+type s3_ListBucketInventoryConfigurationsOutput {
+  ContinuationToken: String
+  InventoryConfigurationList: [s3_InventoryConfiguration]
+  IsTruncated: Boolean
+  NextContinuationToken: String
+}
+
+type s3_ListBucketInventoryConfigurationsOutputResponse {
+  s3_ListBucketInventoryConfigurationsOutput: s3_ListBucketInventoryConfigurationsOutput!
+}
+
+input s3_ListBucketMetricsConfigurationsInput {
+  Bucket: String!
+  ContinuationToken: String
+}
+
+type s3_ListBucketMetricsConfigurationsOutput {
+  ContinuationToken: String
+  IsTruncated: Boolean
+  MetricsConfigurationList: [s3_MetricsConfiguration]
+  NextContinuationToken: String
+}
+
+type s3_ListBucketMetricsConfigurationsOutputResponse {
+  s3_ListBucketMetricsConfigurationsOutput: s3_ListBucketMetricsConfigurationsOutput!
+}
+
+input s3_ListBucketsInput {
+  """NOT YET IMPLEMENTED (probably array)"""
+  Empty: Boolean
+}
+
+type s3_ListBucketsOutput {
+  Buckets: [s3_Bucket]
+  Owner: s3_Owner
+}
+
+type s3_ListBucketsOutputResponse {
+  s3_ListBucketsOutput: s3_ListBucketsOutput!
+}
+
+input s3_ListMultipartUploadsInput {
+  MaxUploads: Int
+  Prefix: String
+  UploadIdMarker: String
+  Bucket: String!
+  Delimiter: String
+  EncodingType: String
+  KeyMarker: String
+}
+
+type s3_ListMultipartUploadsOutput {
+  Bucket: String
+  CommonPrefixes: [s3_CommonPrefix]
+  Delimiter: String
+  EncodingType: String
+  IsTruncated: Boolean
+  KeyMarker: String
+  MaxUploads: Int
+  NextKeyMarker: String
+  NextUploadIdMarker: String
+  Prefix: String
+  UploadIdMarker: String
+  Uploads: [s3_MultipartUpload]
+}
+
+type s3_ListMultipartUploadsOutputResponse {
+  s3_ListMultipartUploadsOutput: s3_ListMultipartUploadsOutput!
+}
+
+input s3_ListObjectsInput {
+  Prefix: String
+  RequestPayer: String
+  Bucket: String!
+  Delimiter: String
+  EncodingType: String
+  Marker: String
+  MaxKeys: Int
+}
+
+type s3_ListObjectsOutput {
+  CommonPrefixes: [s3_CommonPrefix]
+  Contents: [s3_Object]
+  Delimiter: String
+  EncodingType: String
+  IsTruncated: Boolean
+  Marker: String
+  MaxKeys: Int
+  Name: String
+  NextMarker: String
+  Prefix: String
+}
+
+type s3_ListObjectsOutputResponse {
+  s3_ListObjectsOutput: s3_ListObjectsOutput!
+}
+
+input s3_ListObjectsV2Input {
+  Delimiter: String
+  StartAfter: String
+  EncodingType: String
+  RequestPayer: String
+  Bucket: String!
+  FetchOwner: Boolean
+  Prefix: String
+  ContinuationToken: String
+  MaxKeys: Int
+}
+
+type s3_ListObjectsV2Output {
+  CommonPrefixes: [s3_CommonPrefix]
+  Contents: [s3_Object]
+  ContinuationToken: String
+  Delimiter: String
+  EncodingType: String
+  IsTruncated: Boolean
+  KeyCount: Int
+  MaxKeys: Int
+  Name: String
+  NextContinuationToken: String
+  Prefix: String
+  StartAfter: String
+}
+
+type s3_ListObjectsV2OutputResponse {
+  s3_ListObjectsV2Output: s3_ListObjectsV2Output!
+}
+
+input s3_ListObjectVersionsInput {
+  MaxKeys: Int
+  Prefix: String
+  VersionIdMarker: String
+  Bucket: String!
+  Delimiter: String
+  EncodingType: String
+  KeyMarker: String
+}
+
+type s3_ListObjectVersionsOutput {
+  CommonPrefixes: [s3_CommonPrefix]
+  DeleteMarkers: [s3_DeleteMarkerEntry]
+  Delimiter: String
+  EncodingType: String
+  IsTruncated: Boolean
+  KeyMarker: String
+  MaxKeys: Int
+  Name: String
+  NextKeyMarker: String
+  NextVersionIdMarker: String
+  Prefix: String
+  VersionIdMarker: String
+  Versions: [s3_ObjectVersion]
+}
+
+type s3_ListObjectVersionsOutputResponse {
+  s3_ListObjectVersionsOutput: s3_ListObjectVersionsOutput!
+}
+
+input s3_ListPartsInput {
+  UploadId: String!
+  Bucket: String!
+  Key: String!
+  MaxParts: Int
+  PartNumberMarker: Int
+  RequestPayer: String
+}
+
+type s3_ListPartsOutput {
+  AbortDate: time_Time
+  AbortRuleId: String
+  Bucket: String
+  Initiator: s3_Initiator
+  IsTruncated: Boolean
+  Key: String
+  MaxParts: Int
+  NextPartNumberMarker: Int
+  Owner: s3_Owner
+  PartNumberMarker: Int
+  Parts: [s3_Part]
+  RequestCharged: String
+  StorageClass: String
+  UploadId: String
+}
+
+type s3_ListPartsOutputResponse {
+  s3_ListPartsOutput: s3_ListPartsOutput!
+}
+
+input s3_LoggingEnabledInput {
+  TargetBucket: String!
+  TargetGrants: [s3_TargetGrantInput]
+  TargetPrefix: String!
+}
+
+type s3_MetricsAndOperator {
+  Prefix: String
+  Tags: [s3_Tag]
+}
+
+input s3_MetricsAndOperatorInput {
+  Prefix: String
+  Tags: [s3_TagInput]
+}
+
+type s3_MetricsConfiguration {
+  Filter: s3_MetricsFilter
+  Id: String!
+}
+
+input s3_MetricsConfigurationInput {
+  Filter: s3_MetricsFilterInput
+  Id: String!
+}
+
+type s3_MetricsFilter {
+  And: s3_MetricsAndOperator
+  Prefix: String
+  Tag: s3_Tag
+}
+
+input s3_MetricsFilterInput {
+  And: s3_MetricsAndOperatorInput
+  Prefix: String
+  Tag: s3_TagInput
+}
+
+type s3_MultipartUpload {
+  Initiated: time_Time
+  Initiator: s3_Initiator
+  Key: String
+  Owner: s3_Owner
+  StorageClass: String
+  UploadId: String
+}
+
+input s3_NoncurrentVersionExpirationInput {
+  NoncurrentDays: Int
+}
+
+input s3_NoncurrentVersionTransitionInput {
+  NoncurrentDays: Int
+  StorageClass: String
+}
+
+input s3_NotificationConfigurationDeprecatedInput {
+  CloudFunctionConfiguration: s3_CloudFunctionConfigurationInput
+  QueueConfiguration: s3_QueueConfigurationDeprecatedInput
+  TopicConfiguration: s3_TopicConfigurationDeprecatedInput
+}
+
+input s3_NotificationConfigurationFilterInput {
+  Key: s3_KeyFilterInput
+}
+
+input s3_NotificationConfigurationInput {
+  LambdaFunctionConfigurations: [s3_LambdaFunctionConfigurationInput]
+  QueueConfigurations: [s3_QueueConfigurationInput]
+  TopicConfigurations: [s3_TopicConfigurationInput]
+}
+
+type s3_Object {
+  ETag: String
+  Key: String
+  LastModified: time_Time
+  Owner: s3_Owner
+  Size: Int
+  StorageClass: String
+}
+
+input s3_ObjectIdentifierInput {
+  Key: String!
+  VersionId: String
+}
+
+input s3_ObjectLockConfigurationInput {
+  ObjectLockEnabled: String
+  Rule: s3_ObjectLockRuleInput
+}
+
+input s3_ObjectLockLegalHoldInput {
+  Status: String
+}
+
+input s3_ObjectLockRetentionInput {
+  Mode: String
+  RetainUntilDate: time_TimeInput
+}
+
+input s3_ObjectLockRuleInput {
+  DefaultRetention: s3_DefaultRetentionInput
+}
+
+type s3_ObjectVersion {
+  ETag: String
+  IsLatest: Boolean
+  Key: String
+  LastModified: time_Time
+  Owner: s3_Owner
+  Size: Int
+  StorageClass: String
+  VersionId: String
+}
+
+type s3_Owner {
+  DisplayName: String
+  ID: String
+}
+
+input s3_OwnerInput {
+  ID: String
+  DisplayName: String
+}
+
+type s3_Part {
+  ETag: String
+  LastModified: time_Time
+  PartNumber: Int
+  Size: Int
+}
+
+input s3_PublicAccessBlockConfigurationInput {
+  RestrictPublicBuckets: Boolean
+  BlockPublicAcls: Boolean
+  BlockPublicPolicy: Boolean
+  IgnorePublicAcls: Boolean
+}
+
+input s3_PutBucketAccelerateConfigurationInput {
+  AccelerateConfiguration: s3_AccelerateConfigurationInput!
+  Bucket: String!
+}
+
+type s3_PutBucketAccelerateConfigurationOutput {
+  """NOT YET IMPLEMENTED (probably array)"""
+  Empty: Boolean
+}
+
+type s3_PutBucketAccelerateConfigurationOutputResponse {
+  s3_PutBucketAccelerateConfigurationOutput: s3_PutBucketAccelerateConfigurationOutput!
+}
+
+input s3_PutBucketAclInput {
+  Bucket: String!
+  GrantFullControl: String
+  GrantRead: String
+  GrantReadACP: String
+  GrantWrite: String
+  GrantWriteACP: String
+  ACL: String
+  AccessControlPolicy: s3_AccessControlPolicyInput
+}
+
+type s3_PutBucketAclOutput {
+  """NOT YET IMPLEMENTED (probably array)"""
+  Empty: Boolean
+}
+
+type s3_PutBucketAclOutputResponse {
+  s3_PutBucketAclOutput: s3_PutBucketAclOutput!
+}
+
+input s3_PutBucketAnalyticsConfigurationInput {
+  Id: String!
+  AnalyticsConfiguration: s3_AnalyticsConfigurationInput!
+  Bucket: String!
+}
+
+type s3_PutBucketAnalyticsConfigurationOutput {
+  """NOT YET IMPLEMENTED (probably array)"""
+  Empty: Boolean
+}
+
+type s3_PutBucketAnalyticsConfigurationOutputResponse {
+  s3_PutBucketAnalyticsConfigurationOutput: s3_PutBucketAnalyticsConfigurationOutput!
+}
+
+input s3_PutBucketCorsInput {
+  Bucket: String!
+  CORSConfiguration: s3_CORSConfigurationInput!
+}
+
+type s3_PutBucketCorsOutput {
+  """NOT YET IMPLEMENTED (probably array)"""
+  Empty: Boolean
+}
+
+type s3_PutBucketCorsOutputResponse {
+  s3_PutBucketCorsOutput: s3_PutBucketCorsOutput!
+}
+
+input s3_PutBucketEncryptionInput {
+  Bucket: String!
+  ServerSideEncryptionConfiguration: s3_ServerSideEncryptionConfigurationInput!
+}
+
+type s3_PutBucketEncryptionOutput {
+  """NOT YET IMPLEMENTED (probably array)"""
+  Empty: Boolean
+}
+
+type s3_PutBucketEncryptionOutputResponse {
+  s3_PutBucketEncryptionOutput: s3_PutBucketEncryptionOutput!
+}
+
+input s3_PutBucketInventoryConfigurationInput {
+  Id: String!
+  InventoryConfiguration: s3_InventoryConfigurationInput!
+  Bucket: String!
+}
+
+type s3_PutBucketInventoryConfigurationOutput {
+  """NOT YET IMPLEMENTED (probably array)"""
+  Empty: Boolean
+}
+
+type s3_PutBucketInventoryConfigurationOutputResponse {
+  s3_PutBucketInventoryConfigurationOutput: s3_PutBucketInventoryConfigurationOutput!
+}
+
+input s3_PutBucketLifecycleConfigurationInput {
+  LifecycleConfiguration: s3_BucketLifecycleConfigurationInput
+  Bucket: String!
+}
+
+type s3_PutBucketLifecycleConfigurationOutput {
+  """NOT YET IMPLEMENTED (probably array)"""
+  Empty: Boolean
+}
+
+type s3_PutBucketLifecycleConfigurationOutputResponse {
+  s3_PutBucketLifecycleConfigurationOutput: s3_PutBucketLifecycleConfigurationOutput!
+}
+
+input s3_PutBucketLifecycleInput {
+  Bucket: String!
+  LifecycleConfiguration: s3_LifecycleConfigurationInput
+}
+
+type s3_PutBucketLifecycleOutput {
+  """NOT YET IMPLEMENTED (probably array)"""
+  Empty: Boolean
+}
+
+type s3_PutBucketLifecycleOutputResponse {
+  s3_PutBucketLifecycleOutput: s3_PutBucketLifecycleOutput!
+}
+
+input s3_PutBucketLoggingInput {
+  Bucket: String!
+  BucketLoggingStatus: s3_BucketLoggingStatusInput!
+}
+
+type s3_PutBucketLoggingOutput {
+  """NOT YET IMPLEMENTED (probably array)"""
+  Empty: Boolean
+}
+
+type s3_PutBucketLoggingOutputResponse {
+  s3_PutBucketLoggingOutput: s3_PutBucketLoggingOutput!
+}
+
+input s3_PutBucketMetricsConfigurationInput {
+  Bucket: String!
+  Id: String!
+  MetricsConfiguration: s3_MetricsConfigurationInput!
+}
+
+type s3_PutBucketMetricsConfigurationOutput {
+  """NOT YET IMPLEMENTED (probably array)"""
+  Empty: Boolean
+}
+
+type s3_PutBucketMetricsConfigurationOutputResponse {
+  s3_PutBucketMetricsConfigurationOutput: s3_PutBucketMetricsConfigurationOutput!
+}
+
+input s3_PutBucketNotificationConfigurationInput {
+  Bucket: String!
+  NotificationConfiguration: s3_NotificationConfigurationInput!
+}
+
+type s3_PutBucketNotificationConfigurationOutput {
+  """NOT YET IMPLEMENTED (probably array)"""
+  Empty: Boolean
+}
+
+type s3_PutBucketNotificationConfigurationOutputResponse {
+  s3_PutBucketNotificationConfigurationOutput: s3_PutBucketNotificationConfigurationOutput!
+}
+
+input s3_PutBucketNotificationInput {
+  Bucket: String!
+  NotificationConfiguration: s3_NotificationConfigurationDeprecatedInput!
+}
+
+type s3_PutBucketNotificationOutput {
+  """NOT YET IMPLEMENTED (probably array)"""
+  Empty: Boolean
+}
+
+type s3_PutBucketNotificationOutputResponse {
+  s3_PutBucketNotificationOutput: s3_PutBucketNotificationOutput!
+}
+
+input s3_PutBucketPolicyInput {
+  Bucket: String!
+  ConfirmRemoveSelfBucketAccess: Boolean
+  Policy: String!
+}
+
+type s3_PutBucketPolicyOutput {
+  """NOT YET IMPLEMENTED (probably array)"""
+  Empty: Boolean
+}
+
+type s3_PutBucketPolicyOutputResponse {
+  s3_PutBucketPolicyOutput: s3_PutBucketPolicyOutput!
+}
+
+input s3_PutBucketReplicationInput {
+  ReplicationConfiguration: s3_ReplicationConfigurationInput!
+  Bucket: String!
+}
+
+type s3_PutBucketReplicationOutput {
+  """NOT YET IMPLEMENTED (probably array)"""
+  Empty: Boolean
+}
+
+type s3_PutBucketReplicationOutputResponse {
+  s3_PutBucketReplicationOutput: s3_PutBucketReplicationOutput!
+}
+
+input s3_PutBucketRequestPaymentInput {
+  Bucket: String!
+  RequestPaymentConfiguration: s3_RequestPaymentConfigurationInput!
+}
+
+type s3_PutBucketRequestPaymentOutput {
+  """NOT YET IMPLEMENTED (probably array)"""
+  Empty: Boolean
+}
+
+type s3_PutBucketRequestPaymentOutputResponse {
+  s3_PutBucketRequestPaymentOutput: s3_PutBucketRequestPaymentOutput!
+}
+
+input s3_PutBucketTaggingInput {
+  Bucket: String!
+  Tagging: s3_TaggingInput!
+}
+
+type s3_PutBucketTaggingOutput {
+  """NOT YET IMPLEMENTED (probably array)"""
+  Empty: Boolean
+}
+
+type s3_PutBucketTaggingOutputResponse {
+  s3_PutBucketTaggingOutput: s3_PutBucketTaggingOutput!
+}
+
+input s3_PutBucketVersioningInput {
+  VersioningConfiguration: s3_VersioningConfigurationInput!
+  Bucket: String!
+  MFA: String
+}
+
+type s3_PutBucketVersioningOutput {
+  """NOT YET IMPLEMENTED (probably array)"""
+  Empty: Boolean
+}
+
+type s3_PutBucketVersioningOutputResponse {
+  s3_PutBucketVersioningOutput: s3_PutBucketVersioningOutput!
+}
+
+input s3_PutBucketWebsiteInput {
+  WebsiteConfiguration: s3_WebsiteConfigurationInput!
+  Bucket: String!
+}
+
+type s3_PutBucketWebsiteOutput {
+  """NOT YET IMPLEMENTED (probably array)"""
+  Empty: Boolean
+}
+
+type s3_PutBucketWebsiteOutputResponse {
+  s3_PutBucketWebsiteOutput: s3_PutBucketWebsiteOutput!
+}
+
+input s3_PutObjectAclInput {
+  GrantWrite: String
+  Key: String!
+  GrantWriteACP: String
+  AccessControlPolicy: s3_AccessControlPolicyInput
+  Bucket: String!
+  GrantRead: String
+  GrantFullControl: String
+  VersionId: String
+  RequestPayer: String
+  ACL: String
+  GrantReadACP: String
+}
+
+type s3_PutObjectAclOutput {
+  RequestCharged: String
+}
+
+type s3_PutObjectAclOutputResponse {
+  s3_PutObjectAclOutput: s3_PutObjectAclOutput!
+}
+
+input s3_PutObjectInput {
+  WebsiteRedirectLocation: String
+  ContentMD5: String
+  ObjectLockLegalHoldStatus: String
+  ACL: String
+  Metadata: String
+  ContentDisposition: String
+  CacheControl: String
+  SSECustomerAlgorithm: String
+  GrantRead: String
+  SSECustomerKeyMD5: String
+  SSECustomerKey: String
+  ContentEncoding: String
+  RequestPayer: String
+  SSEKMSKeyId: String
+  StorageClass: String
+  GrantWriteACP: String
+  Tagging: String
+  Bucket: String!
+  ServerSideEncryption: String
+  Body: String
+  ObjectLockRetainUntilDate: time_TimeInput
+  ContentLength: Int
+  ObjectLockMode: String
+  ContentType: String
+  Key: String!
+  Expires: time_TimeInput
+  ContentLanguage: String
+  GrantReadACP: String
+  GrantFullControl: String
+}
+
+input s3_PutObjectLegalHoldInput {
+  Bucket: String!
+  Key: String!
+  LegalHold: s3_ObjectLockLegalHoldInput
+  RequestPayer: String
+  VersionId: String
+}
+
+type s3_PutObjectLegalHoldOutput {
+  RequestCharged: String
+}
+
+type s3_PutObjectLegalHoldOutputResponse {
+  s3_PutObjectLegalHoldOutput: s3_PutObjectLegalHoldOutput!
+}
+
+input s3_PutObjectLockConfigurationInput {
+  Token: String
+  Bucket: String!
+  ObjectLockConfiguration: s3_ObjectLockConfigurationInput
+  RequestPayer: String
+}
+
+type s3_PutObjectLockConfigurationOutput {
+  RequestCharged: String
+}
+
+type s3_PutObjectLockConfigurationOutputResponse {
+  s3_PutObjectLockConfigurationOutput: s3_PutObjectLockConfigurationOutput!
+}
+
+type s3_PutObjectOutput {
+  ETag: String
+  Expiration: String
+  RequestCharged: String
+  SSECustomerAlgorithm: String
+  SSECustomerKeyMD5: String
+  SSEKMSKeyId: String
+  ServerSideEncryption: String
+  VersionId: String
+}
+
+type s3_PutObjectOutputResponse {
+  s3_PutObjectOutput: s3_PutObjectOutput!
+}
+
+input s3_PutObjectRetentionInput {
+  Bucket: String!
+  BypassGovernanceRetention: Boolean
+  Key: String!
+  RequestPayer: String
+  Retention: s3_ObjectLockRetentionInput
+  VersionId: String
+}
+
+type s3_PutObjectRetentionOutput {
+  RequestCharged: String
+}
+
+type s3_PutObjectRetentionOutputResponse {
+  s3_PutObjectRetentionOutput: s3_PutObjectRetentionOutput!
+}
+
+input s3_PutObjectTaggingInput {
+  VersionId: String
+  Bucket: String!
+  Key: String!
+  Tagging: s3_TaggingInput!
+}
+
+type s3_PutObjectTaggingOutput {
+  VersionId: String
+}
+
+type s3_PutObjectTaggingOutputResponse {
+  s3_PutObjectTaggingOutput: s3_PutObjectTaggingOutput!
+}
+
+input s3_PutPublicAccessBlockInput {
+  Bucket: String!
+  PublicAccessBlockConfiguration: s3_PublicAccessBlockConfigurationInput!
+}
+
+type s3_PutPublicAccessBlockOutput {
+  """NOT YET IMPLEMENTED (probably array)"""
+  Empty: Boolean
+}
+
+type s3_PutPublicAccessBlockOutputResponse {
+  s3_PutPublicAccessBlockOutput: s3_PutPublicAccessBlockOutput!
+}
+
+input s3_QueueConfigurationDeprecatedInput {
+  Queue: String
+  Event: String
+  Events: [String]
+  Id: String
+}
+
+input s3_QueueConfigurationInput {
+  QueueArn: String!
+  Events: [String]!
+  Filter: s3_NotificationConfigurationFilterInput
+  Id: String
+}
+
+input s3_RedirectAllRequestsToInput {
+  Protocol: String
+  HostName: String!
+}
+
+input s3_RedirectInput {
+  HostName: String
+  HttpRedirectCode: String
+  Protocol: String
+  ReplaceKeyPrefixWith: String
+  ReplaceKeyWith: String
+}
+
+input s3_ReplicationConfigurationInput {
+  Role: String!
+  Rules: [s3_ReplicationRuleInput]!
+}
+
+input s3_ReplicationRuleAndOperatorInput {
+  Prefix: String
+  Tags: [s3_TagInput]
+}
+
+input s3_ReplicationRuleFilterInput {
+  And: s3_ReplicationRuleAndOperatorInput
+  Prefix: String
+  Tag: s3_TagInput
+}
+
+input s3_ReplicationRuleInput {
+  SourceSelectionCriteria: s3_SourceSelectionCriteriaInput
+  Status: String!
+  DeleteMarkerReplication: s3_DeleteMarkerReplicationInput
+  Destination: s3_DestinationInput!
+  Filter: s3_ReplicationRuleFilterInput
+  ID: String
+  Prefix: String
+  Priority: Int
+}
+
+input s3_RequestPaymentConfigurationInput {
+  Payer: String!
+}
+
+input s3_RoutingRuleInput {
+  Condition: s3_ConditionInput
+  Redirect: s3_RedirectInput!
+}
+
+input s3_RuleInput {
+  NoncurrentVersionExpiration: s3_NoncurrentVersionExpirationInput
+  NoncurrentVersionTransition: s3_NoncurrentVersionTransitionInput
+  Prefix: String!
+  Status: String!
+  Transition: s3_TransitionInput
+  AbortIncompleteMultipartUpload: s3_AbortIncompleteMultipartUploadInput
+  Expiration: s3_LifecycleExpirationInput
+  ID: String
+}
+
+input s3_ServerSideEncryptionByDefaultInput {
+  KMSMasterKeyID: String
+  SSEAlgorithm: String!
+}
+
+input s3_ServerSideEncryptionConfigurationInput {
+  Rules: [s3_ServerSideEncryptionRuleInput]!
+}
+
+input s3_ServerSideEncryptionRuleInput {
+  ApplyServerSideEncryptionByDefault: s3_ServerSideEncryptionByDefaultInput
+}
+
+input s3_SourceSelectionCriteriaInput {
+  SseKmsEncryptedObjects: s3_SseKmsEncryptedObjectsInput
+}
+
+type s3_SSEKMS {
+  KeyId: String!
+}
+
+input s3_SseKmsEncryptedObjectsInput {
+  Status: String!
+}
+
+input s3_SSEKMSInput {
+  KeyId: String!
+}
+
+type s3_SSES3 {
+  """NOT YET IMPLEMENTED (probably array)"""
+  Empty: Boolean
+}
+
+input s3_SSES3Input {
+  """NOT YET IMPLEMENTED (probably array)"""
+  Empty: Boolean
+}
+
+type s3_StorageClassAnalysis {
+  DataExport: s3_StorageClassAnalysisDataExport
+}
+
+type s3_StorageClassAnalysisDataExport {
+  Destination: s3_AnalyticsExportDestination!
+  OutputSchemaVersion: String!
+}
+
+input s3_StorageClassAnalysisDataExportInput {
+  OutputSchemaVersion: String!
+  Destination: s3_AnalyticsExportDestinationInput!
+}
+
+input s3_StorageClassAnalysisInput {
+  DataExport: s3_StorageClassAnalysisDataExportInput
+}
+
+type s3_Tag {
+  Key: String!
+  Value: String!
+}
+
+input s3_TaggingInput {
+  TagSet: [s3_TagInput]!
+}
+
+input s3_TagInput {
+  Key: String!
+  Value: String!
+}
+
+input s3_TargetGrantInput {
+  Grantee: s3_GranteeInput
+  Permission: String
+}
+
+input s3_TopicConfigurationDeprecatedInput {
+  Event: String
+  Events: [String]
+  Id: String
+  Topic: String
+}
+
+input s3_TopicConfigurationInput {
+  Filter: s3_NotificationConfigurationFilterInput
+  Id: String
+  TopicArn: String!
+  Events: [String]!
+}
+
+input s3_TransitionInput {
+  Date: time_TimeInput
+  Days: Int
+  StorageClass: String
+}
+
+input s3_VersioningConfigurationInput {
+  MFADelete: String
+  Status: String
+}
+
+input s3_WebsiteConfigurationInput {
+  RoutingRules: [s3_RoutingRuleInput]
+  ErrorDocument: s3_ErrorDocumentInput
+  IndexDocument: s3_IndexDocumentInput
+  RedirectAllRequestsTo: s3_RedirectAllRequestsToInput
+}
+
+type time_Location {
+  cacheEnd: Int
+  cacheStart: Int
+  cacheZone: time_zone
+  name: String
+  tx: [time_zoneTrans]
+  zone: [time_zone]
+}
+
+input time_LocationInput {
+  cacheZone: time_zoneInput
+  name: String
+  zone: [time_zoneInput]
+  tx: [time_zoneTransInput]
+  cacheStart: Int
+  cacheEnd: Int
+}
+
+type time_Time {
+  ext: Int
+  loc: time_Location
+  wall: Int
+}
+
+input time_TimeInput {
+  wall: Int
+  ext: Int
+  loc: time_LocationInput
+}
+
+type time_zone {
+  isDST: Boolean
+  name: String
+  offset: Int
+}
+
+input time_zoneInput {
+  name: String
+  offset: Int
+  isDST: Boolean
+}
+
+type time_zoneTrans {
+  index: Int
+  isstd: Boolean
+  isutc: Boolean
+  when: Int
+}
+
+input time_zoneTransInput {
+  when: Int
+  index: Int
+  isstd: Boolean
+  isutc: Boolean
+}
+
