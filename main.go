@@ -66,7 +66,7 @@ func createCustomType(t reflect.Type) *graphql.Object {
 
 	if len(fields) == 0 {
 		fields["Empty"] = &graphql.Field{
-			Description: "NOT YET IMPLEMENTED (probably array)",
+			Description: "Empty Response",
 			Type:        graphql.Boolean,
 		}
 	}
@@ -129,7 +129,7 @@ func createCustomInputType(t reflect.Type) *graphql.InputObject {
 
 	if len(fields) == 0 {
 		fields["Empty"] = &graphql.InputObjectFieldConfig{
-			Description: "NOT YET IMPLEMENTED (probably array)",
+			Description: "Empty Response",
 			Type:        graphql.Boolean,
 		}
 	}
