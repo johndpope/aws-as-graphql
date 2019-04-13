@@ -55,8 +55,6 @@ var processedInputTypes = make(map[string]*graphql.InputObject)
 
 func lookupInputType(s string) (*graphql.InputObject, error) {
 	if val, ok := processedInputTypes[s]; ok {
-		fmt.Println("InputObject " + s + " already processed!")
-
 		return val, nil
 	}
 
@@ -65,7 +63,6 @@ func lookupInputType(s string) (*graphql.InputObject, error) {
 
 func lookupType(s string) (*graphql.Object, error) {
 	if val, ok := processedTypes[s]; ok {
-		fmt.Println("Object " + s + " already processed!")
 		return val, nil
 	}
 
@@ -93,6 +90,10 @@ func normalizeInputName(str string) string {
 }
 
 func convertPrimitiveToGraphQLType(t reflect.Type) *graphql.Scalar {
+	if t.Kind() == reflect.Ptr {
+		t = t.Elem()
+	}
+
 	switch t.Kind() {
 	case reflect.String:
 		return graphql.String
@@ -105,6 +106,8 @@ func convertPrimitiveToGraphQLType(t reflect.Type) *graphql.Scalar {
 	case reflect.Int32:
 		return graphql.Int
 	case reflect.Int64:
+		return graphql.Int
+	case reflect.Uint8:
 		return graphql.Int
 	case reflect.Uint16:
 		return graphql.Int
@@ -119,8 +122,18 @@ func convertPrimitiveToGraphQLType(t reflect.Type) *graphql.Scalar {
 	return graphql.String
 }
 
+func normalizePointerType(t reflect.Type) reflect.Type {
+	if t.Kind() == reflect.Ptr {
+		return t.Elem()
+	}
+
+	return t
+}
+
 func createCustomType(t reflect.Type) *graphql.Object {
+	t = normalizePointerType(t)
 	name := normalizeGraphQLName(t.String())
+
 	obj, err := lookupType(name)
 	if err == nil {
 		return obj
@@ -136,20 +149,33 @@ func createCustomType(t reflect.Type) *graphql.Object {
 
 		fields[field.Name] = &graphql.Field{}
 
-		if field.Type.Kind() == reflect.Ptr {
-			if field.Type.Elem().Kind() == reflect.Struct {
-				fields[field.Name].Type = createCustomType(field.Type.Elem())
-			} else if field.Tag.Get("required") == "true" {
-				fields[field.Name].Type = graphql.NewNonNull(convertPrimitiveToGraphQLType(field.Type.Elem()))
+		fieldType := normalizePointerType(field.Type)
+		fieldKind := fieldType.Kind()
+
+		fmt.Printf("%v %v\n", fieldType, fieldKind)
+
+		var graphqlType graphql.Output
+
+		if fieldKind == reflect.Struct {
+			graphqlType = createCustomType(fieldType)
+		} else if fieldKind == reflect.Slice {
+			sliceElement := normalizePointerType(fieldType.Elem())
+
+			if sliceElement.Kind() == reflect.Struct {
+				graphqlType = graphql.NewList(createCustomType(sliceElement))
 			} else {
-				fields[field.Name].Type = convertPrimitiveToGraphQLType(field.Type.Elem())
+				graphqlType = graphql.NewList(convertPrimitiveToGraphQLType(sliceElement))
 			}
+		} else if fieldKind == reflect.Interface {
+			continue
 		} else {
-			fmt.Printf("Non PTR: %v\n", field.Type.Kind().String())
-			if field.Type.Kind() != reflect.Struct {
-				fmt.Println(field.Name)
-				fields[field.Name].Type = convertPrimitiveToGraphQLType(field.Type)
-			}
+			graphqlType = convertPrimitiveToGraphQLType(fieldType)
+		}
+
+		if field.Tag.Get("required") == "true" {
+			fields[field.Name].Type = graphql.NewNonNull(graphqlType)
+		} else {
+			fields[field.Name].Type = graphqlType
 		}
 	}
 
@@ -171,6 +197,7 @@ func createCustomType(t reflect.Type) *graphql.Object {
 }
 
 func createCustomInputType(t reflect.Type) *graphql.InputObject {
+	t = normalizePointerType(t)
 	name := normalizeInputName(normalizeGraphQLName(t.String()))
 	obj, err := lookupInputType(name)
 	if err == nil {
@@ -182,16 +209,59 @@ func createCustomInputType(t reflect.Type) *graphql.InputObject {
 	for i := 0; i < t.NumField(); i++ {
 		field := t.Field(i)
 
-		if field.Type.Kind() == reflect.Ptr {
-			fields[field.Name] = &graphql.InputObjectFieldConfig{}
+		if field.Name == "_" {
+			continue
+		}
 
-			if field.Type.Elem().Kind() == reflect.Struct {
-				fields[field.Name].Type = createCustomInputType(field.Type.Elem())
-			} else if field.Tag.Get("required") == "true" {
-				fields[field.Name].Type = graphql.NewNonNull(convertPrimitiveToGraphQLType(field.Type.Elem()))
+		fields[field.Name] = &graphql.InputObjectFieldConfig{}
+
+		// if field.Type.Kind() == reflect.Ptr {
+		// 	if field.Type.Elem().Kind() == reflect.Struct {
+		// 		fields[field.Name].Type = createCustomInputType(field.Type.Elem())
+		// 	} else if field.Tag.Get("required") == "true" {
+		// 		fields[field.Name].Type = graphql.NewNonNull(convertPrimitiveToGraphQLType(field.Type.Elem()))
+		// 	} else {
+		// 		fields[field.Name].Type = convertPrimitiveToGraphQLType(field.Type.Elem())
+		// 	}
+		// } else {
+		// 	fmt.Printf("%v %v %v\n", field.Name, field.Type.Kind(), field.Type.String())
+
+		// 	if field.Type.Kind() == reflect.Interface {
+		// 		continue
+		// 	} else if field.Type.Kind() == reflect.Slice {
+		// 		fields[field.Name].Type = graphql.NewList(createCustomInputType(field.Type.Elem()))
+		// 	} else if field.Type.Kind() != reflect.Struct {
+		// 		fields[field.Name].Type = convertPrimitiveToGraphQLType(field.Type)
+		// 	}
+		// }
+
+		fieldType := normalizePointerType(field.Type)
+		fieldKind := fieldType.Kind()
+
+		fmt.Printf("%v %v\n", fieldType, fieldKind)
+
+		var graphqlType graphql.Output
+
+		if fieldKind == reflect.Struct {
+			graphqlType = createCustomInputType(fieldType)
+		} else if fieldKind == reflect.Slice {
+			sliceElement := normalizePointerType(fieldType.Elem())
+
+			if sliceElement.Kind() == reflect.Struct {
+				graphqlType = graphql.NewList(createCustomInputType(sliceElement))
 			} else {
-				fields[field.Name].Type = convertPrimitiveToGraphQLType(field.Type.Elem())
+				graphqlType = graphql.NewList(convertPrimitiveToGraphQLType(sliceElement))
 			}
+		} else if fieldKind == reflect.Interface {
+			continue
+		} else {
+			graphqlType = convertPrimitiveToGraphQLType(fieldType)
+		}
+
+		if field.Tag.Get("required") == "true" {
+			fields[field.Name].Type = graphql.NewNonNull(graphqlType)
+		} else {
+			fields[field.Name].Type = graphqlType
 		}
 	}
 
@@ -292,9 +362,13 @@ func main() {
 	for i := 0; i < s3Type.NumMethod(); i++ {
 		method := s3Type.Method(i)
 
-		if !strings.HasSuffix(method.Name, "Request") && !strings.HasSuffix(method.Name, "WithContext") && (strings.HasPrefix(method.Name, "Create") || strings.HasPrefix(method.Name, "Delete")) {
+		if strings.HasSuffix(method.Name, "Request") || strings.HasSuffix(method.Name, "WithContext") {
+			continue
+		}
+
+		if strings.HasPrefix(method.Name, "Create") || strings.HasPrefix(method.Name, "Delete") || strings.HasPrefix(method.Name, "Put") {
 			mutationFields[method.Name] = parseFunction(s3Type.Method(i).Type)
-		} else if strings.HasPrefix(method.Name, "Put") && !strings.HasSuffix(method.Name, "Request") && !strings.HasSuffix(method.Name, "WithContext") {
+		} else if strings.HasPrefix(method.Name, "List") || strings.HasPrefix(method.Name, "Describe") {
 			queryFields[method.Name] = parseFunction(s3Type.Method(i).Type)
 		}
 	}
