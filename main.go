@@ -208,32 +208,11 @@ func createCustomInputType(t reflect.Type) *graphql.InputObject {
 
 	for i := 0; i < t.NumField(); i++ {
 		field := t.Field(i)
-
 		if field.Name == "_" {
 			continue
 		}
 
 		fields[field.Name] = &graphql.InputObjectFieldConfig{}
-
-		// if field.Type.Kind() == reflect.Ptr {
-		// 	if field.Type.Elem().Kind() == reflect.Struct {
-		// 		fields[field.Name].Type = createCustomInputType(field.Type.Elem())
-		// 	} else if field.Tag.Get("required") == "true" {
-		// 		fields[field.Name].Type = graphql.NewNonNull(convertPrimitiveToGraphQLType(field.Type.Elem()))
-		// 	} else {
-		// 		fields[field.Name].Type = convertPrimitiveToGraphQLType(field.Type.Elem())
-		// 	}
-		// } else {
-		// 	fmt.Printf("%v %v %v\n", field.Name, field.Type.Kind(), field.Type.String())
-
-		// 	if field.Type.Kind() == reflect.Interface {
-		// 		continue
-		// 	} else if field.Type.Kind() == reflect.Slice {
-		// 		fields[field.Name].Type = graphql.NewList(createCustomInputType(field.Type.Elem()))
-		// 	} else if field.Type.Kind() != reflect.Struct {
-		// 		fields[field.Name].Type = convertPrimitiveToGraphQLType(field.Type)
-		// 	}
-		// }
 
 		fieldType := normalizePointerType(field.Type)
 		fieldKind := fieldType.Kind()
@@ -336,14 +315,25 @@ func parseFunction(t reflect.Type) *graphql.Field {
 	field := &graphql.Field{}
 	field.Description = t.Name()
 
-	// Parse Input Arguments
 	numIn := t.NumIn()
 	for i := 0; i < numIn; i++ {
 		inV := t.In(i)
+		if inV.Kind() == reflect.Func || inV.Kind() == reflect.Interface {
+			continue
+		}
+
 		field.Args = parseInputArg(inV.Elem())
 	}
+	outParam := normalizePointerType(t.Out(0))
 
-	field.Type = parseOutputArg(t.Out(0).Elem())
+	fmt.Printf("%v, %v\n", outParam.String(), outParam.Kind().String())
+
+	if outParam.Kind() == reflect.Struct {
+		field.Type = parseOutputArg(outParam)
+	} else {
+		fmt.Printf("Unrecognized out param! %v, %v\n", outParam.String(), outParam.Kind().String())
+		field.Type = graphql.Boolean
+	}
 
 	return field
 
