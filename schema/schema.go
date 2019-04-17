@@ -1,4 +1,4 @@
-package main
+package schema
 
 import (
 	"encoding/json"
@@ -194,9 +194,24 @@ func parseOutputArg(t reflect.Type) *graphql.Object {
 	return out
 }
 
-func parseFunction(t reflect.Type) *graphql.Field {
-	field := &graphql.Field{}
-	field.Description = t.Name()
+func parseFunction(m reflect.Method) *graphql.Field {
+	t := m.Type
+
+	field := &graphql.Field{
+		Description: t.Name(),
+		Resolve: func(p graphql.ResolveParams) (interface{}, error) {
+			in := make([]reflect.Value, t.NumIn())
+
+			for i := 0; i < t.NumIn(); i++ {
+				object := p.Args["data"]
+
+				fmt.Println(i, "->", object)
+				in[i] = reflect.ValueOf(object)
+			}
+
+			return m.Func.Call(in), nil
+		},
+	}
 
 	numIn := t.NumIn()
 	for i := 0; i < numIn; i++ {
@@ -219,10 +234,10 @@ func parseFunction(t reflect.Type) *graphql.Field {
 	}
 
 	return field
-
 }
 
-func buildSchema() {
+// BuildSchema builds GraphQL Schema
+func BuildSchema() (graphql.Schema, error) {
 	sess, _ := session.NewSession()
 	svc := s3.New(sess)
 	queryFields := graphql.Fields{}
@@ -238,9 +253,9 @@ func buildSchema() {
 		}
 
 		if strings.HasPrefix(method.Name, "Create") || strings.HasPrefix(method.Name, "Delete") || strings.HasPrefix(method.Name, "Put") {
-			mutationFields[method.Name] = parseFunction(s3Type.Method(i).Type)
+			mutationFields[method.Name] = parseFunction(method)
 		} else if strings.HasPrefix(method.Name, "Get") || strings.HasPrefix(method.Name, "List") || strings.HasPrefix(method.Name, "Describe") {
-			queryFields[method.Name] = parseFunction(s3Type.Method(i).Type)
+			queryFields[method.Name] = parseFunction(method)
 		}
 	}
 
@@ -252,8 +267,12 @@ func buildSchema() {
 		Mutation: graphql.NewObject(rootMutation),
 	}
 
-	schema, err := graphql.NewSchema(schemaConfig)
+	return graphql.NewSchema(schemaConfig)
+}
 
+// GetJSONSchema exports GraphQL schema as JSON file
+func GetJSONSchema() {
+	schema, err := BuildSchema()
 	if err != nil {
 		log.Fatalf("failed to create new schema, error: %v", err)
 	}

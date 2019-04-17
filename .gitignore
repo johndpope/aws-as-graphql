@@ -19,3 +19,4 @@ bin
 vendor
 schema.json
 node_modules
+.DS_Store
