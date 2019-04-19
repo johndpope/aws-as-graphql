@@ -1,0 +1,22 @@
+{
+  "name": "aws-as-graphql",
+  "version": "0.0.1",
+  "description": "![alt text](https://i.kym-cdn.com/photos/images/newsfeed/000/114/139/tumblr_lgedv2Vtt21qf4x93o1_40020110725-22047-38imqt.jpg)",
+  "dependencies": {
+    "graphql-playground-middleware-lambda": "^1.7.13"
+  },
+  "devDependencies": {
+    "serverless-offline": "^4.9.4"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/RafalWilinski/aws-as-graphql.git"
+  },
+  "keywords": ["aws", "graphql"],
+  "author": "Rafal Wilinski",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/RafalWilinski/aws-as-graphql/issues"
+  },
+  "homepage": "https://github.com/RafalWilinski/aws-as-graphql#readme"
+}

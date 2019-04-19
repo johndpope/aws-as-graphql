@@ -1,7 +1,5 @@
-const lambdaPlayground = require('graphql-playground-middleware-lambda');
+const lambdaPlayground = require('graphql-playground-middleware-lambda')
 
-const playgroundHandler = lambdaPlayground({
+module.exports.handler = lambdaPlayground({
 	endpoint: '/dev/graphql',
 });
-
-module.exports = { playgroundHandler };
