@@ -15,7 +15,7 @@ package:
 functions:
   playground:
     runtime: nodejs8.10
-    handler: functions/playground.playgroundHandler
+    handler: functions/playground.handler
     events:
       - http:
           path: playground
