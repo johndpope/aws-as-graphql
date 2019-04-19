@@ -38,7 +38,6 @@ func Handler(ctx context.Context, request events.APIGatewayProxyRequest) (events
 	}
 
 	schema, err := schema.BuildSchema()
-
 	graphQLResult := executeQuery(requestBody, schema)
 	responseJSON, err := json.Marshal(graphQLResult)
 

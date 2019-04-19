@@ -21,9 +21,7 @@ func NormalizeInputName(str string) string {
 }
 
 func ConvertPrimitiveToGraphQLType(t reflect.Type) *graphql.Scalar {
-	if t.Kind() == reflect.Ptr {
-		t = t.Elem()
-	}
+	t = NormalizePointerType(t)
 
 	switch t.Kind() {
 	case reflect.String:
@@ -38,6 +36,8 @@ func ConvertPrimitiveToGraphQLType(t reflect.Type) *graphql.Scalar {
 		return graphql.Int
 	case reflect.Int64:
 		return graphql.Int
+	case reflect.Uint:
+		return graphql.Int
 	case reflect.Uint8:
 		return graphql.Int
 	case reflect.Uint16:
@@ -46,6 +46,8 @@ func ConvertPrimitiveToGraphQLType(t reflect.Type) *graphql.Scalar {
 		return graphql.Int
 	case reflect.Uint64:
 		return graphql.Int
+	case reflect.Map:
+		return graphql.String
 	}
 
 	fmt.Printf("Unhandled primitive type: %v\n", t.Kind().String())

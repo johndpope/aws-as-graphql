@@ -254,7 +254,7 @@ func BuildSchema() (graphql.Schema, error) {
 
 		if strings.HasPrefix(method.Name, "Create") || strings.HasPrefix(method.Name, "Delete") || strings.HasPrefix(method.Name, "Put") {
 			mutationFields[method.Name] = parseFunction(method)
-		} else if strings.HasPrefix(method.Name, "Get") || strings.HasPrefix(method.Name, "List") || strings.HasPrefix(method.Name, "Describe") {
+		} else if strings.HasPrefix(method.Name, "List") || strings.HasPrefix(method.Name, "Describe") {
 			queryFields[method.Name] = parseFunction(method)
 		}
 	}
@@ -270,8 +270,8 @@ func BuildSchema() (graphql.Schema, error) {
 	return graphql.NewSchema(schemaConfig)
 }
 
-// GetJSONSchema exports GraphQL schema as JSON file
-func GetJSONSchema() {
+// JSONSchema exports GraphQL schema as JSON file
+func JSONSchema() {
 	schema, err := BuildSchema()
 	if err != nil {
 		log.Fatalf("failed to create new schema, error: %v", err)

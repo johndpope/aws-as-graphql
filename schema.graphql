@@ -74,8 +74,8 @@ input s3_AccelerateConfigurationInput {
 }
 
 input s3_AccessControlPolicyInput {
-  Grants: [s3_GrantInput]
   Owner: s3_OwnerInput
+  Grants: [s3_GrantInput]
 }
 
 input s3_AccessControlTranslationInput {
@@ -88,8 +88,8 @@ type s3_AnalyticsAndOperator {
 }
 
 input s3_AnalyticsAndOperatorInput {
-  Tags: [s3_TagInput]
   Prefix: String
+  Tags: [s3_TagInput]
 }
 
 type s3_AnalyticsConfiguration {
@@ -99,9 +99,9 @@ type s3_AnalyticsConfiguration {
 }
 
 input s3_AnalyticsConfigurationInput {
+  Filter: s3_AnalyticsFilterInput
   Id: String!
   StorageClassAnalysis: s3_StorageClassAnalysisInput!
-  Filter: s3_AnalyticsFilterInput
 }
 
 type s3_AnalyticsExportDestination {
@@ -132,10 +132,10 @@ type s3_AnalyticsS3BucketDestination {
 }
 
 input s3_AnalyticsS3BucketDestinationInput {
-  Bucket: String!
-  BucketAccountId: String
   Format: String!
   Prefix: String
+  Bucket: String!
+  BucketAccountId: String
 }
 
 type s3_Bucket {
@@ -152,11 +152,11 @@ input s3_BucketLoggingStatusInput {
 }
 
 input s3_CloudFunctionConfigurationInput {
-  Event: String
   Events: [String]
   Id: String
   InvocationRole: String
   CloudFunction: String
+  Event: String
 }
 
 type s3_CommonPrefix {
@@ -173,11 +173,11 @@ input s3_CORSConfigurationInput {
 }
 
 input s3_CORSRuleInput {
+  ExposeHeaders: [String]
+  MaxAgeSeconds: Int
   AllowedHeaders: [String]
   AllowedMethods: [String]!
   AllowedOrigins: [String]!
-  ExposeHeaders: [String]
-  MaxAgeSeconds: Int
 }
 
 input s3_CreateBucketConfigurationInput {
@@ -185,15 +185,15 @@ input s3_CreateBucketConfigurationInput {
 }
 
 input s3_CreateBucketInput {
+  CreateBucketConfiguration: s3_CreateBucketConfigurationInput
+  GrantReadACP: String
+  GrantRead: String
+  ObjectLockEnabledForBucket: Boolean
   GrantWrite: String
   GrantFullControl: String
-  GrantWriteACP: String
-  ObjectLockEnabledForBucket: Boolean
-  ACL: String
-  CreateBucketConfiguration: s3_CreateBucketConfigurationInput
   Bucket: String!
-  GrantRead: String
-  GrantReadACP: String
+  GrantWriteACP: String
+  ACL: String
 }
 
 type s3_CreateBucketOutput {
@@ -205,32 +205,32 @@ type s3_CreateBucketOutputResponse {
 }
 
 input s3_CreateMultipartUploadInput {
-  GrantFullControl: String
-  GrantRead: String
+  CacheControl: String
+  SSEKMSKeyId: String
+  StorageClass: String
   ObjectLockLegalHoldStatus: String
-  SSECustomerAlgorithm: String
+  ObjectLockMode: String
+  RequestPayer: String
+  Key: String!
+  GrantFullControl: String
+  Expires: time_TimeInput
+  GrantRead: String
+  ACL: String
+  Tagging: String
+  GrantWriteACP: String
   Metadata: String
   SSECustomerKey: String
+  ContentType: String
   SSECustomerKeyMD5: String
-  Expires: time_TimeInput
-  RequestPayer: String
-  CacheControl: String
-  Key: String!
-  ServerSideEncryption: String
-  ACL: String
-  ContentEncoding: String
+  ContentDisposition: String
   ObjectLockRetainUntilDate: time_TimeInput
-  Tagging: String
   Bucket: String!
   ContentLanguage: String
-  GrantWriteACP: String
-  StorageClass: String
-  GrantReadACP: String
-  ContentType: String
-  ContentDisposition: String
+  SSECustomerAlgorithm: String
+  ServerSideEncryption: String
   WebsiteRedirectLocation: String
-  ObjectLockMode: String
-  SSEKMSKeyId: String
+  GrantReadACP: String
+  ContentEncoding: String
 }
 
 type s3_CreateMultipartUploadOutput {
@@ -257,12 +257,12 @@ input s3_DefaultRetentionInput {
 }
 
 input s3_DeleteBucketAnalyticsConfigurationInput {
-  Id: String!
   Bucket: String!
+  Id: String!
 }
 
 type s3_DeleteBucketAnalyticsConfigurationOutput {
-  """NOT YET IMPLEMENTED (probably array)"""
+  """Empty Response"""
   Empty: Boolean
 }
 
@@ -275,7 +275,7 @@ input s3_DeleteBucketCorsInput {
 }
 
 type s3_DeleteBucketCorsOutput {
-  """NOT YET IMPLEMENTED (probably array)"""
+  """Empty Response"""
   Empty: Boolean
 }
 
@@ -288,7 +288,7 @@ input s3_DeleteBucketEncryptionInput {
 }
 
 type s3_DeleteBucketEncryptionOutput {
-  """NOT YET IMPLEMENTED (probably array)"""
+  """Empty Response"""
   Empty: Boolean
 }
 
@@ -301,12 +301,12 @@ input s3_DeleteBucketInput {
 }
 
 input s3_DeleteBucketInventoryConfigurationInput {
-  Bucket: String!
   Id: String!
+  Bucket: String!
 }
 
 type s3_DeleteBucketInventoryConfigurationOutput {
-  """NOT YET IMPLEMENTED (probably array)"""
+  """Empty Response"""
   Empty: Boolean
 }
 
@@ -319,7 +319,7 @@ input s3_DeleteBucketLifecycleInput {
 }
 
 type s3_DeleteBucketLifecycleOutput {
-  """NOT YET IMPLEMENTED (probably array)"""
+  """Empty Response"""
   Empty: Boolean
 }
 
@@ -328,12 +328,12 @@ type s3_DeleteBucketLifecycleOutputResponse {
 }
 
 input s3_DeleteBucketMetricsConfigurationInput {
-  Id: String!
   Bucket: String!
+  Id: String!
 }
 
 type s3_DeleteBucketMetricsConfigurationOutput {
-  """NOT YET IMPLEMENTED (probably array)"""
+  """Empty Response"""
   Empty: Boolean
 }
 
@@ -342,7 +342,7 @@ type s3_DeleteBucketMetricsConfigurationOutputResponse {
 }
 
 type s3_DeleteBucketOutput {
-  """NOT YET IMPLEMENTED (probably array)"""
+  """Empty Response"""
   Empty: Boolean
 }
 
@@ -355,7 +355,7 @@ input s3_DeleteBucketPolicyInput {
 }
 
 type s3_DeleteBucketPolicyOutput {
-  """NOT YET IMPLEMENTED (probably array)"""
+  """Empty Response"""
   Empty: Boolean
 }
 
@@ -368,7 +368,7 @@ input s3_DeleteBucketReplicationInput {
 }
 
 type s3_DeleteBucketReplicationOutput {
-  """NOT YET IMPLEMENTED (probably array)"""
+  """Empty Response"""
   Empty: Boolean
 }
 
@@ -381,7 +381,7 @@ input s3_DeleteBucketTaggingInput {
 }
 
 type s3_DeleteBucketTaggingOutput {
-  """NOT YET IMPLEMENTED (probably array)"""
+  """Empty Response"""
   Empty: Boolean
 }
 
@@ -394,7 +394,7 @@ input s3_DeleteBucketWebsiteInput {
 }
 
 type s3_DeleteBucketWebsiteOutput {
-  """NOT YET IMPLEMENTED (probably array)"""
+  """Empty Response"""
   Empty: Boolean
 }
 
@@ -446,11 +446,11 @@ type s3_DeleteObjectOutputResponse {
 }
 
 input s3_DeleteObjectsInput {
-  BypassGovernanceRetention: Boolean
-  Delete: s3_DeleteInput!
   MFA: String
   RequestPayer: String
   Bucket: String!
+  BypassGovernanceRetention: Boolean
+  Delete: s3_DeleteInput!
 }
 
 type s3_DeleteObjectsOutput {
@@ -482,7 +482,7 @@ input s3_DeletePublicAccessBlockInput {
 }
 
 type s3_DeletePublicAccessBlockOutput {
-  """NOT YET IMPLEMENTED (probably array)"""
+  """Empty Response"""
   Empty: Boolean
 }
 
@@ -491,11 +491,11 @@ type s3_DeletePublicAccessBlockOutputResponse {
 }
 
 input s3_DestinationInput {
+  AccessControlTranslation: s3_AccessControlTranslationInput
+  Account: String
   Bucket: String!
   EncryptionConfiguration: s3_EncryptionConfigurationInput
   StorageClass: String
-  AccessControlTranslation: s3_AccessControlTranslationInput
-  Account: String
 }
 
 input s3_EncryptionConfigurationInput {
@@ -514,21 +514,21 @@ input s3_ErrorDocumentInput {
 }
 
 input s3_FilterRuleInput {
-  Name: String
   Value: String
+  Name: String
 }
 
 input s3_GranteeInput {
+  DisplayName: String
+  EmailAddress: String
   ID: String
   Type: String!
   URI: String
-  DisplayName: String
-  EmailAddress: String
 }
 
 input s3_GrantInput {
-  Permission: String
   Grantee: s3_GranteeInput
+  Permission: String
 }
 
 input s3_IndexDocumentInput {
@@ -551,13 +551,13 @@ type s3_InventoryConfiguration {
 }
 
 input s3_InventoryConfigurationInput {
+  Schedule: s3_InventoryScheduleInput!
+  Destination: s3_InventoryDestinationInput!
+  Filter: s3_InventoryFilterInput
   Id: String!
   IncludedObjectVersions: String!
   IsEnabled: Boolean!
   OptionalFields: [String]
-  Schedule: s3_InventoryScheduleInput!
-  Destination: s3_InventoryDestinationInput!
-  Filter: s3_InventoryFilterInput
 }
 
 type s3_InventoryDestination {
@@ -595,11 +595,11 @@ type s3_InventoryS3BucketDestination {
 }
 
 input s3_InventoryS3BucketDestinationInput {
-  Prefix: String
   AccountId: String
   Bucket: String!
   Encryption: s3_InventoryEncryptionInput
   Format: String!
+  Prefix: String
 }
 
 type s3_InventorySchedule {
@@ -643,14 +643,14 @@ input s3_LifecycleRuleFilterInput {
 }
 
 input s3_LifecycleRuleInput {
-  Transitions: [s3_TransitionInput]
   Expiration: s3_LifecycleExpirationInput
-  NoncurrentVersionTransitions: [s3_NoncurrentVersionTransitionInput]
-  NoncurrentVersionExpiration: s3_NoncurrentVersionExpirationInput
-  AbortIncompleteMultipartUpload: s3_AbortIncompleteMultipartUploadInput
-  ID: String
-  Status: String!
   Prefix: String
+  ID: String
+  AbortIncompleteMultipartUpload: s3_AbortIncompleteMultipartUploadInput
+  NoncurrentVersionExpiration: s3_NoncurrentVersionExpirationInput
+  Status: String!
+  Transitions: [s3_TransitionInput]
+  NoncurrentVersionTransitions: [s3_NoncurrentVersionTransitionInput]
   Filter: s3_LifecycleRuleFilterInput
 }
 
@@ -687,8 +687,8 @@ type s3_ListBucketInventoryConfigurationsOutputResponse {
 }
 
 input s3_ListBucketMetricsConfigurationsInput {
-  Bucket: String!
   ContinuationToken: String
+  Bucket: String!
 }
 
 type s3_ListBucketMetricsConfigurationsOutput {
@@ -703,7 +703,7 @@ type s3_ListBucketMetricsConfigurationsOutputResponse {
 }
 
 input s3_ListBucketsInput {
-  """NOT YET IMPLEMENTED (probably array)"""
+  """Empty Response"""
   Empty: Boolean
 }
 
@@ -717,13 +717,13 @@ type s3_ListBucketsOutputResponse {
 }
 
 input s3_ListMultipartUploadsInput {
+  KeyMarker: String
   MaxUploads: Int
   Prefix: String
   UploadIdMarker: String
   Bucket: String!
   Delimiter: String
   EncodingType: String
-  KeyMarker: String
 }
 
 type s3_ListMultipartUploadsOutput {
@@ -746,13 +746,13 @@ type s3_ListMultipartUploadsOutputResponse {
 }
 
 input s3_ListObjectsInput {
+  EncodingType: String
+  Marker: String
+  MaxKeys: Int
   Prefix: String
   RequestPayer: String
   Bucket: String!
   Delimiter: String
-  EncodingType: String
-  Marker: String
-  MaxKeys: Int
 }
 
 type s3_ListObjectsOutput {
@@ -773,15 +773,15 @@ type s3_ListObjectsOutputResponse {
 }
 
 input s3_ListObjectsV2Input {
-  Delimiter: String
   StartAfter: String
+  ContinuationToken: String
   EncodingType: String
+  MaxKeys: Int
   RequestPayer: String
   Bucket: String!
   FetchOwner: Boolean
   Prefix: String
-  ContinuationToken: String
-  MaxKeys: Int
+  Delimiter: String
 }
 
 type s3_ListObjectsV2Output {
@@ -804,13 +804,13 @@ type s3_ListObjectsV2OutputResponse {
 }
 
 input s3_ListObjectVersionsInput {
-  MaxKeys: Int
   Prefix: String
   VersionIdMarker: String
   Bucket: String!
   Delimiter: String
   EncodingType: String
   KeyMarker: String
+  MaxKeys: Int
 }
 
 type s3_ListObjectVersionsOutput {
@@ -834,12 +834,12 @@ type s3_ListObjectVersionsOutputResponse {
 }
 
 input s3_ListPartsInput {
+  PartNumberMarker: Int
+  RequestPayer: String
   UploadId: String!
   Bucket: String!
   Key: String!
   MaxParts: Int
-  PartNumberMarker: Int
-  RequestPayer: String
 }
 
 type s3_ListPartsOutput {
@@ -864,9 +864,9 @@ type s3_ListPartsOutputResponse {
 }
 
 input s3_LoggingEnabledInput {
-  TargetBucket: String!
   TargetGrants: [s3_TargetGrantInput]
   TargetPrefix: String!
+  TargetBucket: String!
 }
 
 type s3_MetricsAndOperator {
@@ -896,9 +896,9 @@ type s3_MetricsFilter {
 }
 
 input s3_MetricsFilterInput {
+  Tag: s3_TagInput
   And: s3_MetricsAndOperatorInput
   Prefix: String
-  Tag: s3_TagInput
 }
 
 type s3_MultipartUpload {
@@ -930,9 +930,9 @@ input s3_NotificationConfigurationFilterInput {
 }
 
 input s3_NotificationConfigurationInput {
-  LambdaFunctionConfigurations: [s3_LambdaFunctionConfigurationInput]
   QueueConfigurations: [s3_QueueConfigurationInput]
   TopicConfigurations: [s3_TopicConfigurationInput]
+  LambdaFunctionConfigurations: [s3_LambdaFunctionConfigurationInput]
 }
 
 type s3_Object {
@@ -984,8 +984,8 @@ type s3_Owner {
 }
 
 input s3_OwnerInput {
-  ID: String
   DisplayName: String
+  ID: String
 }
 
 type s3_Part {
@@ -996,19 +996,19 @@ type s3_Part {
 }
 
 input s3_PublicAccessBlockConfigurationInput {
-  RestrictPublicBuckets: Boolean
   BlockPublicAcls: Boolean
   BlockPublicPolicy: Boolean
   IgnorePublicAcls: Boolean
+  RestrictPublicBuckets: Boolean
 }
 
 input s3_PutBucketAccelerateConfigurationInput {
-  AccelerateConfiguration: s3_AccelerateConfigurationInput!
   Bucket: String!
+  AccelerateConfiguration: s3_AccelerateConfigurationInput!
 }
 
 type s3_PutBucketAccelerateConfigurationOutput {
-  """NOT YET IMPLEMENTED (probably array)"""
+  """Empty Response"""
   Empty: Boolean
 }
 
@@ -1028,7 +1028,7 @@ input s3_PutBucketAclInput {
 }
 
 type s3_PutBucketAclOutput {
-  """NOT YET IMPLEMENTED (probably array)"""
+  """Empty Response"""
   Empty: Boolean
 }
 
@@ -1037,13 +1037,13 @@ type s3_PutBucketAclOutputResponse {
 }
 
 input s3_PutBucketAnalyticsConfigurationInput {
+  Bucket: String!
   Id: String!
   AnalyticsConfiguration: s3_AnalyticsConfigurationInput!
-  Bucket: String!
 }
 
 type s3_PutBucketAnalyticsConfigurationOutput {
-  """NOT YET IMPLEMENTED (probably array)"""
+  """Empty Response"""
   Empty: Boolean
 }
 
@@ -1057,7 +1057,7 @@ input s3_PutBucketCorsInput {
 }
 
 type s3_PutBucketCorsOutput {
-  """NOT YET IMPLEMENTED (probably array)"""
+  """Empty Response"""
   Empty: Boolean
 }
 
@@ -1071,7 +1071,7 @@ input s3_PutBucketEncryptionInput {
 }
 
 type s3_PutBucketEncryptionOutput {
-  """NOT YET IMPLEMENTED (probably array)"""
+  """Empty Response"""
   Empty: Boolean
 }
 
@@ -1080,13 +1080,13 @@ type s3_PutBucketEncryptionOutputResponse {
 }
 
 input s3_PutBucketInventoryConfigurationInput {
+  Bucket: String!
   Id: String!
   InventoryConfiguration: s3_InventoryConfigurationInput!
-  Bucket: String!
 }
 
 type s3_PutBucketInventoryConfigurationOutput {
-  """NOT YET IMPLEMENTED (probably array)"""
+  """Empty Response"""
   Empty: Boolean
 }
 
@@ -1095,12 +1095,12 @@ type s3_PutBucketInventoryConfigurationOutputResponse {
 }
 
 input s3_PutBucketLifecycleConfigurationInput {
-  LifecycleConfiguration: s3_BucketLifecycleConfigurationInput
   Bucket: String!
+  LifecycleConfiguration: s3_BucketLifecycleConfigurationInput
 }
 
 type s3_PutBucketLifecycleConfigurationOutput {
-  """NOT YET IMPLEMENTED (probably array)"""
+  """Empty Response"""
   Empty: Boolean
 }
 
@@ -1109,12 +1109,12 @@ type s3_PutBucketLifecycleConfigurationOutputResponse {
 }
 
 input s3_PutBucketLifecycleInput {
-  Bucket: String!
   LifecycleConfiguration: s3_LifecycleConfigurationInput
+  Bucket: String!
 }
 
 type s3_PutBucketLifecycleOutput {
-  """NOT YET IMPLEMENTED (probably array)"""
+  """Empty Response"""
   Empty: Boolean
 }
 
@@ -1128,7 +1128,7 @@ input s3_PutBucketLoggingInput {
 }
 
 type s3_PutBucketLoggingOutput {
-  """NOT YET IMPLEMENTED (probably array)"""
+  """Empty Response"""
   Empty: Boolean
 }
 
@@ -1143,7 +1143,7 @@ input s3_PutBucketMetricsConfigurationInput {
 }
 
 type s3_PutBucketMetricsConfigurationOutput {
-  """NOT YET IMPLEMENTED (probably array)"""
+  """Empty Response"""
   Empty: Boolean
 }
 
@@ -1152,12 +1152,12 @@ type s3_PutBucketMetricsConfigurationOutputResponse {
 }
 
 input s3_PutBucketNotificationConfigurationInput {
-  Bucket: String!
   NotificationConfiguration: s3_NotificationConfigurationInput!
+  Bucket: String!
 }
 
 type s3_PutBucketNotificationConfigurationOutput {
-  """NOT YET IMPLEMENTED (probably array)"""
+  """Empty Response"""
   Empty: Boolean
 }
 
@@ -1166,12 +1166,12 @@ type s3_PutBucketNotificationConfigurationOutputResponse {
 }
 
 input s3_PutBucketNotificationInput {
-  Bucket: String!
   NotificationConfiguration: s3_NotificationConfigurationDeprecatedInput!
+  Bucket: String!
 }
 
 type s3_PutBucketNotificationOutput {
-  """NOT YET IMPLEMENTED (probably array)"""
+  """Empty Response"""
   Empty: Boolean
 }
 
@@ -1180,13 +1180,13 @@ type s3_PutBucketNotificationOutputResponse {
 }
 
 input s3_PutBucketPolicyInput {
+  Policy: String!
   Bucket: String!
   ConfirmRemoveSelfBucketAccess: Boolean
-  Policy: String!
 }
 
 type s3_PutBucketPolicyOutput {
-  """NOT YET IMPLEMENTED (probably array)"""
+  """Empty Response"""
   Empty: Boolean
 }
 
@@ -1195,12 +1195,12 @@ type s3_PutBucketPolicyOutputResponse {
 }
 
 input s3_PutBucketReplicationInput {
-  ReplicationConfiguration: s3_ReplicationConfigurationInput!
   Bucket: String!
+  ReplicationConfiguration: s3_ReplicationConfigurationInput!
 }
 
 type s3_PutBucketReplicationOutput {
-  """NOT YET IMPLEMENTED (probably array)"""
+  """Empty Response"""
   Empty: Boolean
 }
 
@@ -1214,7 +1214,7 @@ input s3_PutBucketRequestPaymentInput {
 }
 
 type s3_PutBucketRequestPaymentOutput {
-  """NOT YET IMPLEMENTED (probably array)"""
+  """Empty Response"""
   Empty: Boolean
 }
 
@@ -1223,12 +1223,12 @@ type s3_PutBucketRequestPaymentOutputResponse {
 }
 
 input s3_PutBucketTaggingInput {
-  Bucket: String!
   Tagging: s3_TaggingInput!
+  Bucket: String!
 }
 
 type s3_PutBucketTaggingOutput {
-  """NOT YET IMPLEMENTED (probably array)"""
+  """Empty Response"""
   Empty: Boolean
 }
 
@@ -1237,13 +1237,13 @@ type s3_PutBucketTaggingOutputResponse {
 }
 
 input s3_PutBucketVersioningInput {
-  VersioningConfiguration: s3_VersioningConfigurationInput!
   Bucket: String!
   MFA: String
+  VersioningConfiguration: s3_VersioningConfigurationInput!
 }
 
 type s3_PutBucketVersioningOutput {
-  """NOT YET IMPLEMENTED (probably array)"""
+  """Empty Response"""
   Empty: Boolean
 }
 
@@ -1252,12 +1252,12 @@ type s3_PutBucketVersioningOutputResponse {
 }
 
 input s3_PutBucketWebsiteInput {
-  WebsiteConfiguration: s3_WebsiteConfigurationInput!
   Bucket: String!
+  WebsiteConfiguration: s3_WebsiteConfigurationInput!
 }
 
 type s3_PutBucketWebsiteOutput {
-  """NOT YET IMPLEMENTED (probably array)"""
+  """Empty Response"""
   Empty: Boolean
 }
 
@@ -1266,17 +1266,17 @@ type s3_PutBucketWebsiteOutputResponse {
 }
 
 input s3_PutObjectAclInput {
-  GrantWrite: String
-  Key: String!
-  GrantWriteACP: String
-  AccessControlPolicy: s3_AccessControlPolicyInput
   Bucket: String!
-  GrantRead: String
   GrantFullControl: String
-  VersionId: String
+  GrantWrite: String
+  AccessControlPolicy: s3_AccessControlPolicyInput
+  Key: String!
   RequestPayer: String
+  VersionId: String
   ACL: String
   GrantReadACP: String
+  GrantWriteACP: String
+  GrantRead: String
 }
 
 type s3_PutObjectAclOutput {
@@ -1288,35 +1288,35 @@ type s3_PutObjectAclOutputResponse {
 }
 
 input s3_PutObjectInput {
-  WebsiteRedirectLocation: String
-  ContentMD5: String
-  ObjectLockLegalHoldStatus: String
-  ACL: String
-  Metadata: String
-  ContentDisposition: String
-  CacheControl: String
-  SSECustomerAlgorithm: String
-  GrantRead: String
-  SSECustomerKeyMD5: String
-  SSECustomerKey: String
-  ContentEncoding: String
-  RequestPayer: String
-  SSEKMSKeyId: String
-  StorageClass: String
-  GrantWriteACP: String
-  Tagging: String
-  Bucket: String!
-  ServerSideEncryption: String
-  Body: String
   ObjectLockRetainUntilDate: time_TimeInput
+  RequestPayer: String
+  SSECustomerKeyMD5: String
   ContentLength: Int
-  ObjectLockMode: String
-  ContentType: String
+  GrantRead: String
+  Bucket: String!
   Key: String!
+  ObjectLockMode: String
+  WebsiteRedirectLocation: String
+  ACL: String
+  ContentDisposition: String
+  Body: String
   Expires: time_TimeInput
-  ContentLanguage: String
-  GrantReadACP: String
   GrantFullControl: String
+  SSECustomerAlgorithm: String
+  Tagging: String
+  ServerSideEncryption: String
+  Metadata: String
+  ContentMD5: String
+  StorageClass: String
+  ContentEncoding: String
+  GrantWriteACP: String
+  ContentType: String
+  SSECustomerKey: String
+  GrantReadACP: String
+  CacheControl: String
+  ContentLanguage: String
+  SSEKMSKeyId: String
+  ObjectLockLegalHoldStatus: String
 }
 
 input s3_PutObjectLegalHoldInput {
@@ -1336,10 +1336,10 @@ type s3_PutObjectLegalHoldOutputResponse {
 }
 
 input s3_PutObjectLockConfigurationInput {
-  Token: String
   Bucket: String!
   ObjectLockConfiguration: s3_ObjectLockConfigurationInput
   RequestPayer: String
+  Token: String
 }
 
 type s3_PutObjectLockConfigurationOutput {
@@ -1366,12 +1366,12 @@ type s3_PutObjectOutputResponse {
 }
 
 input s3_PutObjectRetentionInput {
-  Bucket: String!
-  BypassGovernanceRetention: Boolean
-  Key: String!
   RequestPayer: String
   Retention: s3_ObjectLockRetentionInput
   VersionId: String
+  Bucket: String!
+  BypassGovernanceRetention: Boolean
+  Key: String!
 }
 
 type s3_PutObjectRetentionOutput {
@@ -1383,10 +1383,10 @@ type s3_PutObjectRetentionOutputResponse {
 }
 
 input s3_PutObjectTaggingInput {
+  Tagging: s3_TaggingInput!
   VersionId: String
   Bucket: String!
   Key: String!
-  Tagging: s3_TaggingInput!
 }
 
 type s3_PutObjectTaggingOutput {
@@ -1403,7 +1403,7 @@ input s3_PutPublicAccessBlockInput {
 }
 
 type s3_PutPublicAccessBlockOutput {
-  """NOT YET IMPLEMENTED (probably array)"""
+  """Empty Response"""
   Empty: Boolean
 }
 
@@ -1412,17 +1412,17 @@ type s3_PutPublicAccessBlockOutputResponse {
 }
 
 input s3_QueueConfigurationDeprecatedInput {
-  Queue: String
-  Event: String
   Events: [String]
   Id: String
+  Queue: String
+  Event: String
 }
 
 input s3_QueueConfigurationInput {
-  QueueArn: String!
   Events: [String]!
   Filter: s3_NotificationConfigurationFilterInput
   Id: String
+  QueueArn: String!
 }
 
 input s3_RedirectAllRequestsToInput {
@@ -1431,11 +1431,11 @@ input s3_RedirectAllRequestsToInput {
 }
 
 input s3_RedirectInput {
-  HostName: String
-  HttpRedirectCode: String
   Protocol: String
   ReplaceKeyPrefixWith: String
   ReplaceKeyWith: String
+  HostName: String
+  HttpRedirectCode: String
 }
 
 input s3_ReplicationConfigurationInput {
@@ -1449,9 +1449,9 @@ input s3_ReplicationRuleAndOperatorInput {
 }
 
 input s3_ReplicationRuleFilterInput {
+  Tag: s3_TagInput
   And: s3_ReplicationRuleAndOperatorInput
   Prefix: String
-  Tag: s3_TagInput
 }
 
 input s3_ReplicationRuleInput {
@@ -1475,14 +1475,14 @@ input s3_RoutingRuleInput {
 }
 
 input s3_RuleInput {
-  NoncurrentVersionExpiration: s3_NoncurrentVersionExpirationInput
-  NoncurrentVersionTransition: s3_NoncurrentVersionTransitionInput
   Prefix: String!
   Status: String!
   Transition: s3_TransitionInput
   AbortIncompleteMultipartUpload: s3_AbortIncompleteMultipartUploadInput
   Expiration: s3_LifecycleExpirationInput
   ID: String
+  NoncurrentVersionExpiration: s3_NoncurrentVersionExpirationInput
+  NoncurrentVersionTransition: s3_NoncurrentVersionTransitionInput
 }
 
 input s3_ServerSideEncryptionByDefaultInput {
@@ -1515,12 +1515,12 @@ input s3_SSEKMSInput {
 }
 
 type s3_SSES3 {
-  """NOT YET IMPLEMENTED (probably array)"""
+  """Empty Response"""
   Empty: Boolean
 }
 
 input s3_SSES3Input {
-  """NOT YET IMPLEMENTED (probably array)"""
+  """Empty Response"""
   Empty: Boolean
 }
 
@@ -1534,8 +1534,8 @@ type s3_StorageClassAnalysisDataExport {
 }
 
 input s3_StorageClassAnalysisDataExportInput {
-  OutputSchemaVersion: String!
   Destination: s3_AnalyticsExportDestinationInput!
+  OutputSchemaVersion: String!
 }
 
 input s3_StorageClassAnalysisInput {
@@ -1569,16 +1569,16 @@ input s3_TopicConfigurationDeprecatedInput {
 }
 
 input s3_TopicConfigurationInput {
-  Filter: s3_NotificationConfigurationFilterInput
-  Id: String
   TopicArn: String!
   Events: [String]!
+  Filter: s3_NotificationConfigurationFilterInput
+  Id: String
 }
 
 input s3_TransitionInput {
+  StorageClass: String
   Date: time_TimeInput
   Days: Int
-  StorageClass: String
 }
 
 input s3_VersioningConfigurationInput {
@@ -1587,10 +1587,10 @@ input s3_VersioningConfigurationInput {
 }
 
 input s3_WebsiteConfigurationInput {
-  RoutingRules: [s3_RoutingRuleInput]
   ErrorDocument: s3_ErrorDocumentInput
   IndexDocument: s3_IndexDocumentInput
   RedirectAllRequestsTo: s3_RedirectAllRequestsToInput
+  RoutingRules: [s3_RoutingRuleInput]
 }
 
 type time_Location {
@@ -1603,12 +1603,12 @@ type time_Location {
 }
 
 input time_LocationInput {
-  cacheZone: time_zoneInput
   name: String
   zone: [time_zoneInput]
   tx: [time_zoneTransInput]
   cacheStart: Int
   cacheEnd: Int
+  cacheZone: time_zoneInput
 }
 
 type time_Time {
@@ -1618,9 +1618,9 @@ type time_Time {
 }
 
 input time_TimeInput {
+  loc: time_LocationInput
   wall: Int
   ext: Int
-  loc: time_LocationInput
 }
 
 type time_zone {
@@ -1643,9 +1643,9 @@ type time_zoneTrans {
 }
 
 input time_zoneTransInput {
-  when: Int
   index: Int
   isstd: Boolean
   isutc: Boolean
+  when: Int
 }
 

@@ -5,6 +5,11 @@
   "dependencies": {
     "graphql-playground-middleware-lambda": "^1.7.13"
   },
+  "scripts": {
+    "build": "make",
+    "deploy": "npm run build && sls deploy",
+    "print-schema": "node schema-print/index.js > schema.graphql"
+  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/RafalWilinski/aws-as-graphql.git"
