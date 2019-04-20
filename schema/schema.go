@@ -209,7 +209,13 @@ func parseFunction(m reflect.Method) *graphql.Field {
 				in[i] = reflect.ValueOf(object)
 			}
 
-			return m.Func.Call(in), nil
+			structPtr := reflect.New(reflect.TypeOf(m).In(0)).Interface()
+			json.Unmarshal(p.Args["data"].([]byte), structPtr)
+
+			sess, _ := session.NewSession()
+			svc := s3.New(sess)
+
+			return m.Func.Call([]reflect.Value{reflect.ValueOf(svc), reflect.ValueOf(structPtr)}), nil
 		},
 	}
 
@@ -223,8 +229,6 @@ func parseFunction(m reflect.Method) *graphql.Field {
 		field.Args = parseInputArg(inV.Elem())
 	}
 	outParam := utils.NormalizePointerType(t.Out(0))
-
-	fmt.Printf("%v, %v\n", outParam.String(), outParam.Kind().String())
 
 	if outParam.Kind() == reflect.Struct {
 		field.Type = parseOutputArg(outParam)
